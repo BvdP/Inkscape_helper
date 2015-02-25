@@ -236,11 +236,11 @@ class TestCoordinate(unittest.TestCase):
     def test_t(self):
         self.assertEqual(self.C11.t, pi/4)
 
-class Helper(inkex.Effect):
+class Effect(inkex.Effect):
     """
 
     """
-    def __init__(self, options):
+    def __init__(self):
         inkex.Effect.__init__(self)
         self.knownUnits = ['in', 'pt', 'px', 'mm', 'cm', 'm', 'km', 'pc', 'yd', 'ft']
 
