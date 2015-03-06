@@ -8,6 +8,8 @@ from math import *
 
 #Note: keep in mind that SVG coordinates start in the top-left corner i.e. with an inverted y-axis
 
+errormsg = inkex.errormsg
+debug = inkex.debug
 
 default_style = simplestyle.formatStyle(
     {'stroke': '#000000',
@@ -21,7 +23,7 @@ groove_style = simplestyle.formatStyle(
     'fill': 'none'
     })
 
-def draw_SVG_square(parent, w, h, x, y, style=default_style):
+def draw_square(parent, w, h, x, y, style=default_style):
     attribs = {
         'style': style,
         'height': str(h),
@@ -31,7 +33,7 @@ def draw_SVG_square(parent, w, h, x, y, style=default_style):
     }
     inkex.etree.SubElement(parent, inkex.addNS('rect', 'svg'), attribs)
 
-def draw_SVG_ellipse(parent, rx, ry, center, start_end=(0, 2*pi), style=default_style, transform=''):
+def draw_ellipse(parent, rx, ry, center, start_end=(0, 2*pi), style=default_style, transform=''):
     ell_attribs = {'style': style,
         inkex.addNS('cx', 'sodipodi'): str(center.x),
         inkex.addNS('cy', 'sodipodi'): str(center.y),
@@ -46,7 +48,7 @@ def draw_SVG_ellipse(parent, rx, ry, center, start_end=(0, 2*pi), style=default_
     inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), ell_attribs)
 
 
-def draw_SVG_arc(parent, rx, ry, x_axis_rot, style=default_style):
+def draw_arc(parent, rx, ry, x_axis_rot, style=default_style):
     arc_attribs = {'style': style,
         'rx': str(rx),
         'ry': str(ry),
@@ -62,7 +64,7 @@ def draw_SVG_arc(parent, rx, ry, x_axis_rot, style=default_style):
     inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), drw)
     inkex.addNS('', 'svg')
 
-def draw_SVG_text(parent, coordinate, txt, style=default_style):
+def draw_text(parent, coordinate, txt, style=default_style):
     text = inkex.etree.Element(inkex.addNS('text', 'svg'))
     text.text = txt
     text.set('x', str(coordinate.x))
@@ -72,7 +74,7 @@ def draw_SVG_text(parent, coordinate, txt, style=default_style):
     parent.append(text)
 
 #draw an SVG line segment between the given (raw) points
-def draw_SVG_line(parent, start, end, style = default_style):
+def draw_line(parent, start, end, style = default_style):
     line_attribs = {'style': style,
                     'd': 'M '+str(start.x)+','+str(start.y)+' L '+str(end.x)+','+str(end.y)}
 
@@ -102,14 +104,15 @@ def SVG_curve(parent, segments, style, closed=True):
       'd': pathStr}
     inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), attributes)
 
-    def layer(parent, layer_name):
-        layer = inkex.etree.SubElement(parent, 'g')
-        layer.set(inkex.addNS('label', 'inkscape'), layer_name)
-        layer.set(inkex.addNS('groupmode', 'inkscape'), 'layer')
-        return layer
+def layer(parent, layer_name):
+    layer = inkex.etree.SubElement(parent, 'g')
+    layer.set(inkex.addNS('label', 'inkscape'), layer_name)
+    layer.set(inkex.addNS('groupmode', 'inkscape'), 'layer')
+    return layer
 
-    def group(parent):
-        return inkex.etree.SubElement(parent, 'g')
+def group(parent):
+    return inkex.etree.SubElement(parent, 'g')
+
 
 class IntersectionError(ValueError):
         """Raised when two lines do not intersect."""
@@ -244,6 +247,7 @@ class TestCoordinate(unittest.TestCase):
 
     def test_t(self):
         self.assertEqual(self.C11.t, pi/4)
+
 
 class Effect(inkex.Effect):
     """
