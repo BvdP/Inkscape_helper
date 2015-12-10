@@ -215,53 +215,14 @@ class TestCoordinate(unittest.TestCase):
     def test_t(self):
         self.assertEqual(self.C11.t, pi/4)
 
-class Helper(inkex.Effect):
+
+class Effect(inkex.Effect):
     """
 
     """
-    def __init__(self, options):
+    def __init__(self):
         inkex.Effect.__init__(self)
         self.knownUnits = ['in', 'pt', 'px', 'mm', 'cm', 'm', 'km', 'pc', 'yd', 'ft']
-
-        self.OptionParser.add_option('--unit', action = 'store',
-          type = 'string', dest = 'unit', default = 'cm',
-          help = 'Unit, should be one of ')
-
-        self.OptionParser.add_option('--tool_diameter', action = 'store',
-          type = 'float', dest = 'tool_diameter', default = '0.3',
-          help = 'Tool diameter')
-
-        self.OptionParser.add_option('--tolerance', action = 'store',
-          type = 'float', dest = 'tolerance', default = '0.05',
-          help = '')
-
-        self.OptionParser.add_option('--thickness', action = 'store',
-          type = 'float', dest = 'thickness', default = '1.2',
-          help = 'Material thickness')
-
-        self.OptionParser.add_option('--width', action = 'store',
-          type = 'float', dest = 'width', default = '3.0',
-          help = 'Box width')
-
-        self.OptionParser.add_option('--height', action = 'store',
-          type = 'float', dest = 'height', default = '10.0',
-          help = 'Box height')
-
-        self.OptionParser.add_option('--depth', action = 'store',
-          type = 'float', dest = 'depth', default = '3.0',
-          help = 'Box depth')
-
-        self.OptionParser.add_option('--shelves', action = 'store',
-          type = 'string', dest = 'shelve_list', default = '',
-          help = 'semicolon separated list of shelve heigths')
-
-        self.OptionParser.add_option('--groove_depth', action = 'store',
-          type = 'float', dest = 'groove_depth', default = '0.5',
-          help = 'Groove depth')
-
-        self.OptionParser.add_option('--tab_size', action = 'store',
-          type = 'float', dest = 'tab_size', default = '10',
-          help = 'Approximate tab width (tabs will be evenly spaced along the length of the edge)')
 
     try:
         inkex.Effect.unittouu   # unitouu has moved since Inkscape 0.91
@@ -274,9 +235,9 @@ class Helper(inkex.Effect):
 
     def effect(self):
         """
-        Draws a shelved cupboard, based on provided parameters
-        """
 
+        """
+        pass
         # input sanity check and unit conversion
         error = False
 
