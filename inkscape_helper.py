@@ -245,42 +245,7 @@ class Effect(inkex.Effect):
 
         """
         pass
-        # input sanity check and unit conversion
-        error = False
 
-        if self.options.unit not in self.knownUnits:
-            inkex.errormsg('Error: unknown unit. '+ self.options.unit)
-            error = True
-        unit = self.options.unit
-
-        if min(self.options.height, self.options.width, self.options.depth) == 0:
-            inkex.errormsg('Error: Dimensions must be non zero')
-            error = True
-
-        shelves = []
-
-        for s in self.options.shelve_list.split(';'):
-            try:
-                shelves.append(self.unittouu(str(s).strip() + unit))
-            except ValueError:
-                inkex.errormsg('Error: nonnumeric value in shelves (' + s + ')')
-                error = True
-
-        if error:
-            exit()
-
-        height = self.unittouu(str(self.options.height) + unit)
-        width = self.unittouu(str(self.options.width) + unit)
-        depth = self.unittouu(str(self.options.depth) + unit)
-        thickness = self.unittouu(str(self.options.thickness) + unit)
-        groove_depth = self.unittouu(str(self.options.groove_depth) + unit)
-        tab_size = self.unittouu(str(self.options.tab_size) + unit)
-        tolerance = self.unittouu(str(self.options.tolerance) + unit)
-        tool_diameter = self.unittouu(str(self.options.tool_diameter) + unit)
-
-        svg = self.document.getroot()
-        docWidth = self.unittouu(svg.get('width'))
-        docHeigh = self.unittouu(svg.attrib['height'])
 
 def _format_1st(command, is_absolute):
     return command.upper() if is_absolute else command.lower()
@@ -297,9 +262,6 @@ class Path:
 
     def h_line_to(self, dist, absolute=False):
         self.nodes.append("{0} {1}".format(_format_1st('h', absolute), dist))
-        layer = inkex.etree.SubElement(svg, 'g')
-        layer.set(inkex.addNS('label', 'inkscape'), 'Shelves')
-        layer.set(inkex.addNS('groupmode', 'inkscape'), 'layer')
 
     def v_line_to(self, dist, absolute=False):
         self.nodes.append("{0} {1}".format(_format_1st('v', absolute), dist))
@@ -355,7 +317,6 @@ class TestPath(unittest.TestCase, Effect):
         #print(p_str, p.nodes)
         self.assertEqual(p.nodes, ['M {0} {1}'.format(0.0, 0.0), 'l {0} {1}'.format(1.0, 1.0)])
 
-            return 2 * n + 1
 
 if __name__ == '__main__':
     coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
