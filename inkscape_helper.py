@@ -360,6 +360,8 @@ class TestPath(unittest.TestCase, Effect):
 if __name__ == '__main__':
     coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
     intersection_t = unittest.TestLoader().loadTestsFromTestCase(TestIntersection)
-    suite = unittest.TestSuite([coordinate_t, intersection_t])
-    unittest.TextTestRunner(verbosity=2).run(suite)    
+    path_t = unittest.TestLoader().loadTestsFromTestCase(TestPath)
+
+    suite = unittest.TestSuite([coordinate_t, intersection_t, path_t])
+    unittest.TextTestRunner(verbosity=2).run(suite)
 #    unittest.main()
