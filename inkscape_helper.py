@@ -79,7 +79,14 @@ def draw_line(parent, start, end, style = default_style):
     inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), line_attribs)
 
 
+def layer(parent, layer_name):
+    layer = inkex.etree.SubElement(parent, 'g')
+    layer.set(inkex.addNS('label', 'inkscape'), layer_name)
+    layer.set(inkex.addNS('groupmode', 'inkscape'), 'layer')
+    return layer
 
+def group(parent):
+    return inkex.etree.SubElement(parent, 'g')
 
 
 class IntersectionError(ValueError):
