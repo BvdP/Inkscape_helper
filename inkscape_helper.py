@@ -287,18 +287,8 @@ class Effect(inkex.Effect):
         layer.set(inkex.addNS('groupmode', 'inkscape'), 'layer')
 
 
-        def H(x):
-            return Coordinate(x, 0)
 
-        def V(x):
-            return Coordinate(0, x)
 
-        def tab_count(dist, desired_tab_size):
-            F = int(dist // desired_tab_size)
-            if F / 2 % 2 == 0:  # make sure we have an odd number of tabs
-                n = F // 2
-            else:
-                n = (F - 1) // 2
 
             return 2 * n + 1
 
