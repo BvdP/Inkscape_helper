@@ -282,13 +282,78 @@ class Effect(inkex.Effect):
         docWidth = self.unittouu(svg.get('width'))
         docHeigh = self.unittouu(svg.attrib['height'])
 
+def _format_1st(command, is_absolute):
+    return command.upper() if is_absolute else command.lower()
+
+class Path:
+    def __init__(self):
+        self.nodes = []
+
+    def move_to(self, coord, absolute=False):
+        self.nodes.append("{0} {1} {2}".format(_format_1st('m', absolute), coord.x, coord.y))
+
+    def line_to(self, coord, absolute=False):
+        self.nodes.append("{0} {1} {2}".format(_format_1st('l', absolute), coord.x, coord.y))
+
+    def h_line_to(self, dist, absolute=False):
+        self.nodes.append("{0} {1}".format(_format_1st('h', absolute), dist))
         layer = inkex.etree.SubElement(svg, 'g')
         layer.set(inkex.addNS('label', 'inkscape'), 'Shelves')
         layer.set(inkex.addNS('groupmode', 'inkscape'), 'layer')
 
+    def v_line_to(self, dist, absolute=False):
+        self.nodes.append("{0} {1}".format(_format_1st('v', absolute), dist))
 
+    def arc_to(self, rx, ry, x, y):
+        la = sw = 0
+        return "A %d %d 0 %d %d" % (rx, ry, la, sw, x, y)
 
+    def close(self):
+        self.nodes.append('z')
 
+    def path(self, parent, style):
+        attribs = {'style': style,
+                    'd': ' '.join(self.nodes)}
+        inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), attribs)
+
+    def curve(parent, segments, style, closed=True):
+        #pathStr = 'M '+ segments[0]
+        pathStr = ' '.join(segments)
+        if closed:
+            pathStr += ' z'
+        attributes = {
+          'style': style,
+          'd': pathStr}
+        inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), attributes)
+
+    def remove_last(self):
+        self.nodes.pop()
+
+class TestPath(unittest.TestCase, Effect):
+    # def __init__(self, *args, **kwargs):
+        # print args, kwargs
+        # unittest.TestCase.__init__(*args, **kwargs)
+        # Effect.__init__()
+
+    def setUp(self):
+        #eff = inkex.Effect()
+        Effect.__init__(self)
+        self.affect(['empty.svg'])
+        #self.doc_root = eff.document.getroot()
+        self.C00 = Coordinate(0, 0)
+        self.C10 = Coordinate(1, 0)
+        self.C01 = Coordinate(0, 1)
+        self.C11 = Coordinate(1, 1)
+
+    def test_line(self):
+        p = Path()
+        parent = self.document.getroot()
+        p.move_to(self.C00, True)
+        p.line_to(self.C11)
+        p.path(parent, default_style)
+        p_str = inkex.etree.tostring(self.document)
+        #print(p_str, p.nodes)
+        self.assertEqual(p.nodes, ['M {0} {1}'.format(0.0, 0.0), 'l {0} {1}'.format(1.0, 1.0)])
 
             return 2 * n + 1
 
