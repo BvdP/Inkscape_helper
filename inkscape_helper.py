@@ -107,7 +107,7 @@ def intersection (s1, e1, s2, e2, on_segments = True):
         if on_segments:
             raise IntersectionError("Intersection {} is not on line segments [{} -> {}] [{} -> {}]".format(I, s1, e1, s2, e2))
     return I
-    
+
 class TestIntersection(unittest.TestCase):
     def setUp(self):
         self.C00 = Coordinate(0, 0)
@@ -137,26 +137,26 @@ class TestIntersection(unittest.TestCase):
 
 def inner_product(a, b):
     return a.x * b.x + a.y * b.y
-        
+
 class Coordinate:
     def __init__(self, x, y):
         self.x = float(x)
         self.y = float(y)
-    
+
     @property
     def t(self):
         return atan2(self.y, self.x)
-    
+
     #@t.setter
     #def t(self, value):
-    
+
     @property
     def r(self):
         return sqrt(self.x ** 2 + self.y ** 2)
-    
+
     #@r.setter
     #def r(self, value):
-    
+
     def __repr__(self):
         return self.__str__()
 
@@ -209,10 +209,10 @@ class TestCoordinate(unittest.TestCase):
     def test_div(self):
         quot = self.C11 / 2
         self.assertEqual(quot, Coordinate(.5, .5))
-        
+
     def test_r(self):
         self. assertEqual(self.C11.r, sqrt(2))
-        
+
     def test_t(self):
         self.assertEqual(self.C11.t, pi/4)
 
