@@ -21,7 +21,7 @@ groove_style = simplestyle.formatStyle(
     'fill': 'none'
     })
 
-def draw_SVG_square(parent, w, h, x, y, style=default_style):
+def draw_square(parent, w, h, x, y, style=default_style):
     attribs = {
         'style': style,
         'height': str(h),
@@ -31,7 +31,7 @@ def draw_SVG_square(parent, w, h, x, y, style=default_style):
     }
     inkex.etree.SubElement(parent, inkex.addNS('rect', 'svg'), attribs)
 
-def draw_SVG_ellipse(parent, rx, ry, center, start_end=(0, 2*pi), style=default_style, transform=''):
+def draw_ellipse(parent, rx, ry, center, start_end=(0, 2*pi), style=default_style, transform=''):
     ell_attribs = {'style': style,
         inkex.addNS('cx', 'sodipodi'): str(center.x),
         inkex.addNS('cy', 'sodipodi'): str(center.y),
@@ -46,7 +46,7 @@ def draw_SVG_ellipse(parent, rx, ry, center, start_end=(0, 2*pi), style=default_
     inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), ell_attribs)
 
 
-def draw_SVG_arc(parent, rx, ry, x_axis_rot, style=default_style):
+def draw_arc(parent, rx, ry, x_axis_rot, style=default_style):
     arc_attribs = {'style': style,
         'rx': str(rx),
         'ry': str(ry),
@@ -62,7 +62,7 @@ def draw_SVG_arc(parent, rx, ry, x_axis_rot, style=default_style):
     inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), drw)
     inkex.addNS('', 'svg')
 
-def draw_SVG_text(parent, coordinate, txt, style=default_style):
+def draw_text(parent, coordinate, txt, style=default_style):
     text = inkex.etree.Element(inkex.addNS('text', 'svg'))
     text.text = txt
     text.set('x', str(coordinate.x))
@@ -72,35 +72,15 @@ def draw_SVG_text(parent, coordinate, txt, style=default_style):
     parent.append(text)
 
 #draw an SVG line segment between the given (raw) points
-def draw_SVG_line(parent, start, end, style = default_style):
+def draw_line(parent, start, end, style = default_style):
     line_attribs = {'style': style,
                     'd': 'M '+str(start.x)+','+str(start.y)+' L '+str(end.x)+','+str(end.y)}
 
     inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), line_attribs)
 
 
-def SVG_move_to(x, y):
-    return "M %d %d" % (x, y)
 
-def SVG_line_to(x, y):
-    return "L %d %d" % (x, y)
 
-def SVG_arc_to(rx, ry, x, y):
-    la = sw = 0
-    return "A %d %d 0 %d %d" % (rx, ry, la, sw, x, y)
-
-def SVG_path(components):
-    return '<path d="' + ' '.join(components) + '">'
-
-def SVG_curve(parent, segments, style, closed=True):
-    #pathStr = 'M '+ segments[0]
-    pathStr = ' '.join(segments)
-    if closed:
-        pathStr += ' z'
-    attributes = {
-      'style': style,
-      'd': pathStr}
-    inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), attributes)
 
 class IntersectionError(ValueError):
         """Raised when two lines do not intersect."""
