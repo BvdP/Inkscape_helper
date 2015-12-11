@@ -21,6 +21,12 @@ groove_style = simplestyle.formatStyle(
     'fill': 'none'
     })
 
+mark_style = simplestyle.formatStyle(
+    {'stroke': '#00FF00',
+    'stroke-width': '1',
+    'fill': 'none'
+    })
+
 def draw_square(parent, w, h, x, y, style=default_style):
     attribs = {
         'style': style,
