@@ -8,6 +8,8 @@ from math import *
 
 #Note: keep in mind that SVG coordinates start in the top-left corner i.e. with an inverted y-axis
 
+errormsg = inkex.errormsg
+debug = inkex.debug
 
 default_style = simplestyle.formatStyle(
     {'stroke': '#000000',
@@ -83,7 +85,6 @@ def draw_line(parent, start, end, style = default_style):
                     'd': 'M '+str(start.x)+','+str(start.y)+' L '+str(end.x)+','+str(end.y)}
 
     inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), line_attribs)
-
 
 def layer(parent, layer_name):
     layer = inkex.etree.SubElement(parent, 'g')
