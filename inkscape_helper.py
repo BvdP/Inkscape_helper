@@ -234,9 +234,16 @@ class Effect(inkex.Effect):
     """
 
     """
-    def __init__(self):
+    def __init__(self, options=None):
         inkex.Effect.__init__(self)
         self.knownUnits = ['in', 'pt', 'px', 'mm', 'cm', 'm', 'km', 'pc', 'yd', 'ft']
+
+        if options != None:
+            for opt in options:
+                if len(opt) == 2:
+                    self.OptionParser.add_option('--' + opt[0], type = opt[1], dest = opt[0])
+                else:
+                    self.OptionParser.add_option('--' + opt[0], type = opt[1], dest = opt[0],default = opt[2], help = opt[3])
 
     try:
         inkex.Effect.unittouu   # unitouu has moved since Inkscape 0.91
