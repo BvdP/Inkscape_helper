@@ -29,7 +29,7 @@ mark_style = simplestyle.formatStyle(
     'fill': 'none'
     })
 
-def draw_square(parent, w, h, x, y, style=default_style):
+def draw_rectangle(parent, w, h, x, y, rx=0, ry=0, style=default_style):
     attribs = {
         'style': style,
         'height': str(h),
@@ -37,6 +37,9 @@ def draw_square(parent, w, h, x, y, style=default_style):
         'x': str(x),
         'y': str(y)
     }
+    if rx != 0 and ry != 0:
+        attribs['rx'] = str(rx)
+        attribs['ry'] = str(ry)
     inkex.etree.SubElement(parent, inkex.addNS('rect', 'svg'), attribs)
 
 def draw_ellipse(parent, rx, ry, center, start_end=(0, 2*pi), style=default_style, transform=''):
@@ -280,9 +283,8 @@ class Path:
     def v_line_to(self, dist, absolute=False):
         self.nodes.append("{0} {1}".format(_format_1st('v', absolute), dist))
 
-    def arc_to(self, rx, ry, x, y):
-        la = sw = 0
-        return "A %d %d 0 %d %d" % (rx, ry, la, sw, x, y)
+    def arc_to(self, rx, ry, x, y, rotation=0, pos_sweep=True, large_arc=False, absolute=False):
+        self.nodes.append("{0} {1} {2} {3} {4} {5} {6} {7}".format(_format_1st('a', absolute), rx, ry, rotation, 1 if large_arc else 0, 1 if pos_sweep else 0, x, y))
 
     def close(self):
         self.nodes.append('z')
