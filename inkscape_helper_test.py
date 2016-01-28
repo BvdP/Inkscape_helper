@@ -12,11 +12,11 @@ class TestIntersection(unittest.TestCase):
         self.C11 = Coordinate(1, 1)
 
     def test_on_segment(self):
-        self.assertTrue(_on_segment(self.C11, self.C00, self.C11), 'Endpoint on segment')
-        self.assertTrue(_on_segment(self.C00, self.C00, self.C11), 'Start point on segment')
-        self.assertTrue(_on_segment(self.C11 / 2, self.C00, self.C11), 'Midpoint on segment')
-        self.assertFalse(_on_segment(self.C11 * 2, self.C00, self.C11), 'Beyond endpoint')
-        self.assertFalse(_on_segment(self.C11 * -1, self.C00, self.C11), 'Before start point')
+        self.assertTrue(on_segment(self.C11, self.C00, self.C11), 'Endpoint on segment')
+        self.assertTrue(on_segment(self.C00, self.C00, self.C11), 'Start point on segment')
+        self.assertTrue(on_segment(self.C11 / 2, self.C00, self.C11), 'Midpoint on segment')
+        self.assertFalse(on_segment(self.C11 * 2, self.C00, self.C11), 'Beyond endpoint')
+        self.assertFalse(on_segment(self.C11 * -1, self.C00, self.C11), 'Before start point')
 
 
     def test_parallel(self):

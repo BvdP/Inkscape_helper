@@ -102,7 +102,7 @@ def group(parent):
 class IntersectionError(ValueError):
         """Raised when two lines do not intersect."""
 
-def _on_segment(pt, start, end):
+def on_segment(pt, start, end):
     """Check if pt is between start and end. The three points are presumed to be collinear."""
     pt -= start
     end -= start
@@ -120,7 +120,7 @@ def intersection (s1, e1, s2, e2, on_segments = True):
     N2 = s2.x * e2.y - s2.y * e2.x
     I = ((s2 - e2) * N1 - (s1 - e1) * N2) / D
 
-    if on_segments and not (_on_segment(I, s1, e1) and _on_segment(I, s2, e2)):
+    if on_segments and not (on_segment(I, s1, e1) and on_segment(I, s2, e2)):
         raise IntersectionError("Intersection {0} is not on line segments [{1} -> {2}] [{3} -> {4}]".format(I, s1, e1, s2, e2))
     return I
 
