@@ -1,10 +1,12 @@
 #!/usr/bin/env python
-
+from __future__ import division
 import inkex
 import simplestyle
 
 
 from math import *
+from collections import namedtuple
+
 
 #Note: keep in mind that SVG coordinates start in the top-left corner i.e. with an inverted y-axis
 
@@ -171,6 +173,8 @@ class Coordinate:
     def __div__(self, quotient):
         return Coordinate(self.x / quotient, self.y / quotient)
 
+    def __truediv__(self, quotient):
+        return self.__div__(quotient)
 
 
 
@@ -248,6 +252,80 @@ class Path:
     def remove_last(self):
         self.nodes.pop()
 
+
+PathPoint = namedtuple('PathPoint', 't Coordinate normal inv_curvature')
+
+class PathSegment():
+
+    def __init__(self):
+        raise NotImplementedError
+
+    @property
+    def lenth(self):
+        raise NotImplementedError
+
+    def subdivide(self, nr_parts):
+        raise NotImplementedError
+    # also need:
+    #   point and normal at distance D from start
+    #   curvature
+    #   find a way do do curvature dependent spacingm
+    #       - based on deviation from a standard radius?
+    #       - or ratio between thickness and curvature?
+    #def point_at_distance(d):
+    #    pass
+
+
+class Line(PathSegment):
+
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+    @property
+    def length(self):
+        return sqrt((start.x - end.x)**2 + (start.y - end.y)**2)
+
+    def subdivide(self, nr_parts):
+        return [PathPoint(k/self.length, start + k * (end - start) / self.length, 0) for k in range(nr_parts)]
+
+
+
+class BezierCurve(PathSegment):
+    nrPoints = 10
+    def __init__(self, P): # number of points is limited to 3 or 4
+        if len(P) == 3: # quadratic
+            B = lambda t : (1 - t)**2 * P[0] + 2 * (1 - t) * t * P[1] + t**2 * P[2]
+            Bd = lambda t : 2 * (1 - t) * (P[1] - P[0]) + 2 * t * (P[2] - P[1])
+            Bdd = lambda t : 2 * (P[2] - 2 * P[1] + P[0])
+        elif len(P) == 4: #cubic
+            B = lambda t : (1 - t)**3 * P[0] + 3 * (1 - t)**2 * t * P[1] + 3 * (1 - t) * P[2] + t**3 * P[3]
+            Bd = lambda t : 3 * (1 - t)**2 * (P[1] - P[0]) + 6 * (1 - t) * t * (P[2] - P[1]) + 3 * t**2 * (P[3] - P[2])
+            Bdd = lambda t : 6 * (1 - t) * (P[2] - 2 * P[1] + P[0]) + 6 * t * (P[3] - 2 * P[2] + P[1])
+
+        self.points = []
+        for i in range(self.nrPoints):
+            t = i / self.nrPoints
+            normal = 0
+            inv_curv = sqrt(Bd(t).x**2 + Bd(t).y**2)**3 / (Bd(t).x * Bdd(t).y - Bd(t).y * Bdd(t).x)
+            self.points.append(PathPoint(t, B(t), normal, inv_curv))
+
+    @classmethod
+    def quadratic(cls, start, c, end):
+        bezier = cls()
+
+    @classmethod
+    def cubic(cls, start, c1, c2, end):
+        bezier = cls()
+
+    def __make_eq__(self):
+        pass
+    @property
+    def lenth(self):
+        pass
+
+    def subdivide(self, nr_parts, start_offset=0):
+        pass
 
 
 class Ellipse():
