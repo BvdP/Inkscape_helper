@@ -253,7 +253,7 @@ class Path:
         self.nodes.pop()
 
 
-PathPoint = namedtuple('PathPoint', 't Coordinate normal inv_curvature')
+PathPoint = namedtuple('PathPoint', 't Coordinate normal curv_n curv_d')
 
 class PathSegment():
 
@@ -307,8 +307,9 @@ class BezierCurve(PathSegment):
         for i in range(self.nrPoints):
             t = i / (self.nrPoints - 1)
             normal = 0
-            inv_curv = sqrt(Bd(t).x**2 + Bd(t).y**2)**3 / (Bd(t).x * Bdd(t).y - Bd(t).y * Bdd(t).x)
-            self.points.append(PathPoint(t, B(t), normal, inv_curv))
+            curv_n = (Bd(t).x * Bdd(t).y - Bd(t).y * Bdd(t).x)
+            curv_d = sqrt(Bd(t).x**2 + Bd(t).y**2)**3
+            self.points.append(PathPoint(t, B(t), normal, curv_n, curv_d))
 
     @classmethod
     def quadratic(cls, start, c, end):
