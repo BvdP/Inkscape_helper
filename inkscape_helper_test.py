@@ -99,7 +99,7 @@ class TestBezier(unittest.TestCase, Effect):
         self.assertEqual(self.quadratic.points[0].Coordinate, C10)
 
     def test_quadratic_bezier_end(self):
-        self.assertEqual(self.quadratic.points[0].Coordinate, C01)
+        self.assertEqual(self.quadratic.points[-1].Coordinate, C01)
 
 
 
