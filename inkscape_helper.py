@@ -292,7 +292,7 @@ class Line(PathSegment):
 
 
 class BezierCurve(PathSegment):
-    nrPoints = 10
+    nrPoints = 11
     def __init__(self, P): # number of points is limited to 3 or 4
         if len(P) == 3: # quadratic
             B = lambda t : (1 - t)**2 * P[0] + 2 * (1 - t) * t * P[1] + t**2 * P[2]
@@ -305,7 +305,7 @@ class BezierCurve(PathSegment):
 
         self.points = []
         for i in range(self.nrPoints):
-            t = i / self.nrPoints
+            t = i / (self.nrPoints - 1)
             normal = 0
             inv_curv = sqrt(Bd(t).x**2 + Bd(t).y**2)**3 / (Bd(t).x * Bdd(t).y - Bd(t).y * Bdd(t).x)
             self.points.append(PathPoint(t, B(t), normal, inv_curv))
