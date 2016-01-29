@@ -92,14 +92,18 @@ class TestPath(unittest.TestCase, Effect):
 
 
 class TestBezier(unittest.TestCase, Effect):
-    def setUp(self):
-        self.quadratic = BezierCurve([C10, C11, C01])
+    #def setUp(self):
 
-    def test_quadratic_bezier_start(self):
-        self.assertEqual(self.quadratic.points[0].Coordinate, C10)
 
-    def test_quadratic_bezier_end(self):
-        self.assertEqual(self.quadratic.points[-1].Coordinate, C01)
+    def test_quadratic_bezier(self):
+        quadratic = BezierCurve([C10, C11, C01])
+        self.assertEqual(quadratic.points[0].Coordinate, C10, 'start point')
+        self.assertEqual(quadratic.points[-1].Coordinate, C01, 'end point')
+
+    def test_cubic_bezier(self):
+        cubic = BezierCurve([C10, C11, C00, C01])
+        self.assertEqual(cubic.points[0].Coordinate, C10, 'start point')
+        self.assertEqual(cubic.points[-1].Coordinate, C01, 'end point')
 
 
 
