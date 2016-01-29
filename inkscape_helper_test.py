@@ -91,11 +91,25 @@ class TestPath(unittest.TestCase, Effect):
         self.assertEqual(p.nodes, ['M {0} {1}'.format(0.0, 0.0), 'l {0} {1}'.format(1.0, 1.0)])
 
 
+class TestBezier(unittest.TestCase, Effect):
+    def setUp(self):
+        self.quadratic = BezierCurve([C10, C11, C01])
+
+    def test_quadratic_bezier_start(self):
+        self.assertEqual(self.quadratic.points[0].Coordinate, C10)
+
+    def test_quadratic_bezier_end(self):
+        self.assertEqual(self.quadratic.points[0].Coordinate, C01)
+
+
+
 
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
 intersection_t = unittest.TestLoader().loadTestsFromTestCase(TestIntersection)
 path_t = unittest.TestLoader().loadTestsFromTestCase(TestPath)
+bezier_t = unittest.TestLoader().loadTestsFromTestCase(TestBezier)
 
-suite = unittest.TestSuite([coordinate_t, intersection_t, path_t])
+
+suite = unittest.TestSuite([coordinate_t, intersection_t, path_t, bezier_t])
 unittest.TextTestRunner(verbosity=2).run(suite)
 #    unittest.main()
