@@ -156,7 +156,7 @@ class Coordinate:
         return "(%f, %f)" % (self.x, self.y)
 
     def __eq__(self, other):
-        return self.x == other.x and self
+        return self.x == other.x and self.y == other.y
 
     def __add__(self, other):
         return Coordinate(self.x + other.x, self.y + other.y)
