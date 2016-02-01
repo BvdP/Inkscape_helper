@@ -97,13 +97,13 @@ class TestBezier(unittest.TestCase, Effect):
 
     def test_quadratic_bezier(self):
         quadratic = BezierCurve([C10, C11, C01])
-        self.assertEqual(quadratic.points[0].Coordinate, C10, 'start point')
-        self.assertEqual(quadratic.points[-1].Coordinate, C01, 'end point')
+        self.assertEqual(quadratic.points[0].coord, C10, 'start point')
+        self.assertEqual(quadratic.points[-1].coord, C01, 'end point')
 
     def test_cubic_bezier(self):
         cubic = BezierCurve([C10, C11, C00, C01])
-        self.assertEqual(cubic.points[0].Coordinate, C10, 'start point')
-        self.assertEqual(cubic.points[-1].Coordinate, C01, 'end point')
+        self.assertEqual(cubic.points[0].coord, C10, 'start point')
+        self.assertEqual(cubic.points[-1].coord, C01, 'end point')
 
 
 

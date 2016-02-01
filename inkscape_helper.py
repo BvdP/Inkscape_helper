@@ -253,7 +253,7 @@ class Path:
         self.nodes.pop()
 
 
-PathPoint = namedtuple('PathPoint', 't Coordinate normal curv_n curv_d')
+PathPoint = namedtuple('PathPoint', 't coord normal curv_n curv_d c_dist')
 
 class PathSegment():
 
@@ -287,12 +287,12 @@ class Line(PathSegment):
         return sqrt((start.x - end.x)**2 + (start.y - end.y)**2)
 
     def subdivide(self, nr_parts):
-        return [PathPoint(k/self.length, start + k * (end - start) / self.length, 0) for k in range(nr_parts)]
+        return [PathPoint(k/self.length, start + k * (end - start) / self.length, 0, 0) for k in range(nr_parts)]
 
 
 
 class BezierCurve(PathSegment):
-    nrPoints = 11
+    nrPoints = 10
     def __init__(self, P): # number of points is limited to 3 or 4
         if len(P) == 3: # quadratic
             B = lambda t : (1 - t)**2 * P[0] + 2 * (1 - t) * t * P[1] + t**2 * P[2]
@@ -303,13 +303,20 @@ class BezierCurve(PathSegment):
             Bd = lambda t : 3 * (1 - t)**2 * (P[1] - P[0]) + 6 * (1 - t) * t * (P[2] - P[1]) + 3 * t**2 * (P[3] - P[2])
             Bdd = lambda t : 6 * (1 - t) * (P[2] - 2 * P[1] + P[0]) + 6 * t * (P[3] - 2 * P[2] + P[1])
 
-        self.points = []
+        curv_n = lambda t : Bd(t).x * Bdd(t).y - Bd(t).y * Bdd(t).x
+        curv_d = lambda t : hypot(Bd(t).x, Bd(t).y)**3
+        normal = lambda t : Coordinate(-Bd(t).y, Bd(t).x)
+
+        #self.points = [PathPoint(0, P[0], Coordinate(-Bd(t).y, Bd(t).x), curv_n(t), curv_d(t), 0 )]
+        self.points = [PathPoint(0, P[0], normal(0), curv_n(0), curv_d(0), 0)]
         for i in range(self.nrPoints):
-            t = i / (self.nrPoints - 1)
-            normal = 0
-            curv_n = (Bd(t).x * Bdd(t).y - Bd(t).y * Bdd(t).x)
-            curv_d = sqrt(Bd(t).x**2 + Bd(t).y**2)**3
-            self.points.append(PathPoint(t, B(t), normal, curv_n, curv_d))
+            t = (i + 1) / self.nrPoints
+
+            prev = self.points[-1]
+            pt = B(t)
+            self.points.append(PathPoint(t, pt, normal(t) , curv_n(t), curv_d(t), prev.c_dist + hypot(prev.coord.x - pt.x, prev.coord.y - pt.y)))
+
+        self.length = self.points[-1].c_dist
 
     @classmethod
     def quadratic(cls, start, c, end):
