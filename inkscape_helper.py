@@ -292,8 +292,9 @@ class Line(PathSegment):
 
 
 class BezierCurve(PathSegment):
-    nrPoints = 10
+    nr_points = 10
     def __init__(self, P): # number of points is limited to 3 or 4
+
         if len(P) == 3: # quadratic
             B = lambda t : (1 - t)**2 * P[0] + 2 * (1 - t) * t * P[1] + t**2 * P[2]
             Bd = lambda t : 2 * (1 - t) * (P[1] - P[0]) + 2 * t * (P[2] - P[1])
@@ -309,8 +310,8 @@ class BezierCurve(PathSegment):
 
         #self.points = [PathPoint(0, P[0], Coordinate(-Bd(t).y, Bd(t).x), curv_n(t), curv_d(t), 0 )]
         self.points = [PathPoint(0, P[0], normal(0), curv_n(0), curv_d(0), 0)]
-        for i in range(self.nrPoints):
-            t = (i + 1) / self.nrPoints
+        for i in range(self.nr_points):
+            t = (i + 1) / self.nr_points
 
             prev = self.points[-1]
             pt = B(t)
@@ -335,6 +336,43 @@ class BezierCurve(PathSegment):
     def subdivide(self, nr_parts, start_offset=0):
         pass
 
+    def interpolate(self, idx0, ratio):
+        step = 1 / self.nr_points
+        p0 = self.points[idx0]
+        p1 = self.points[idx0 + 1]
+        #for p in
+        return PathPoint(
+            (p0.t + ratio * p1.t) / 2,
+            (p0.coord + ratio * p1.coord) / 2,
+            (p0.normal + ratio * p1.normal) / 2,
+            (p0.curv_n + ratio * p1.curv_n) / 2,
+            (p0.curv_d + ratio * p1.curv_d) / 2,
+            (p0.c_dist + ratio * p1.c_dist) / 2)
+
+
+    def pathpoint_at_t(self, t):
+        """interpolated pathpoint on the curve from t=0 to point at t."""
+        step = 1 / self.nr_points
+        pt_idx = int(t // step)
+        ip_fact = t % step
+      #  p0 = self.points[pt_idx]
+      #  p1 = self.points[pt_idx + 1]
+
+        return self.interpolate(pt_idx, ip_fact / step)
+
+    def pathpoint_at_length(self, length):
+        """interpolated pathpoint on the curve at given length"""
+        i_min = 0
+        i_max = self.nr_points
+
+        while i_max - i_min > 1:  # binary search
+            i_half = i_min + (i_max - i_min) // 2
+            if self.points[i_half].c_dist < length:
+                i_min = i_half
+            else:
+                i_max = i_half
+
+        return self.interpolate(i_min, (length - self.points[i_min].c_length) / self.length)
 
 class Ellipse():
     nrPoints = 1000 #used for piecewise linear circumference calculation (ellipse circumference is tricky to calculate)
