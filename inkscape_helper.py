@@ -329,9 +329,10 @@ class BezierCurve(PathSegment):
 
     def __make_eq__(self):
         pass
+
     @property
     def lenth(self):
-        pass
+        return self.length
 
     def subdivide(self, nr_parts, start_offset=0):
         pass
@@ -362,11 +363,11 @@ class BezierCurve(PathSegment):
     def pathpoint_at_length(self, length):
         """interpolated pathpoint on the curve at given length"""
         i_min = 0
-        i_max = self.nr_points
+        i_max = self.nr_points + 1
 
         while i_max - i_min > 1:  # binary search
             i_half = i_min + (i_max - i_min) // 2
-            if self.points[i_half].c_dist < length:
+            if self.points[i_half].c_dist <= length:
                 i_min = i_half
             else:
                 i_max = i_half
