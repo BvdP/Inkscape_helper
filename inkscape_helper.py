@@ -331,7 +331,7 @@ class BezierCurve(PathSegment):
         pass
 
     @property
-    def lenth(self):
+    def length(self):
         return self.length
 
     def subdivide(self, nr_parts, start_offset=0):
