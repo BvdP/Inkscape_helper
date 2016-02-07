@@ -342,22 +342,21 @@ class BezierCurve(PathSegment):
         p1 = self.points[idx0 + 1]
         #for p in
         return PathPoint(
-            (p0.t + ratio * p1.t) / 2,
-            (p0.coord + ratio * p1.coord) / 2,
-            (p0.normal + ratio * p1.normal) / 2,
-            (p0.curv_n + ratio * p1.curv_n) / 2,
-            (p0.curv_d + ratio * p1.curv_d) / 2,
-            (p0.c_dist + ratio * p1.c_dist) / 2)
+            ((1 - ratio) * p0.t + ratio * p1.t) ,
+            ((1 - ratio) * p0.coord + ratio * p1.coord),
+            ((1 - ratio) * p0.normal + ratio * p1.normal),
+            ((1 - ratio) * p0.curv_n + ratio * p1.curv_n),
+            ((1 - ratio) * p0.curv_d + ratio * p1.curv_d),
+            ((1 - ratio) * p0.c_dist + ratio * p1.c_dist))
 
 
     def pathpoint_at_t(self, t):
         """interpolated pathpoint on the curve from t=0 to point at t."""
         step = 1 / self.nr_points
-        pt_idx = int(t // step)
-        ip_fact = t % step
+        pt_idx = int(t / step)
+        ip_fact = t - pt_idx * step
       #  p0 = self.points[pt_idx]
       #  p1 = self.points[pt_idx + 1]
-
         return self.interpolate(pt_idx, ip_fact / step)
 
     def pathpoint_at_length(self, length):
@@ -372,7 +371,7 @@ class BezierCurve(PathSegment):
             else:
                 i_max = i_half
 
-        return self.interpolate(i_min, (length - self.points[i_min].c_length) / self.length)
+        return self.interpolate(i_min, (length - self.points[i_min].c_dist) / self.length)
 
 class Ellipse():
     nrPoints = 1000 #used for piecewise linear circumference calculation (ellipse circumference is tricky to calculate)
