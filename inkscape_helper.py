@@ -296,28 +296,23 @@ class BezierCurve(PathSegment):
     def __init__(self, P): # number of points is limited to 3 or 4
 
         if len(P) == 3: # quadratic
-            B = lambda t : (1 - t)**2 * P[0] + 2 * (1 - t) * t * P[1] + t**2 * P[2]
-            Bd = lambda t : 2 * (1 - t) * (P[1] - P[0]) + 2 * t * (P[2] - P[1])
-            Bdd = lambda t : 2 * (P[2] - 2 * P[1] + P[0])
+            self.B = lambda t : (1 - t)**2 * P[0] + 2 * (1 - t) * t * P[1] + t**2 * P[2]
+            self.Bd = lambda t : 2 * (1 - t) * (P[1] - P[0]) + 2 * t * (P[2] - P[1])
+            self.Bdd = lambda t : 2 * (P[2] - 2 * P[1] + P[0])
         elif len(P) == 4: #cubic
-            B = lambda t : (1 - t)**3 * P[0] + 3 * (1 - t)**2 * t * P[1] + 3 * (1 - t) * t**2 * P[2] + t**3 * P[3]
-            Bd = lambda t : 3 * (1 - t)**2 * (P[1] - P[0]) + 6 * (1 - t) * t * (P[2] - P[1]) + 3 * t**2 * (P[3] - P[2])
-            Bdd = lambda t : 6 * (1 - t) * (P[2] - 2 * P[1] + P[0]) + 6 * t * (P[3] - 2 * P[2] + P[1])
+            self.B = lambda t : (1 - t)**3 * P[0] + 3 * (1 - t)**2 * t * P[1] + 3 * (1 - t) * t**2 * P[2] + t**3 * P[3]
+            self.Bd = lambda t : 3 * (1 - t)**2 * (P[1] - P[0]) + 6 * (1 - t) * t * (P[2] - P[1]) + 3 * t**2 * (P[3] - P[2])
+            self.Bdd = lambda t : 6 * (1 - t) * (P[2] - 2 * P[1] + P[0]) + 6 * t * (P[3] - 2 * P[2] + P[1])
 
-        curv_n = lambda t : Bd(t).x * Bdd(t).y - Bd(t).y * Bdd(t).x
-        curv_d = lambda t : hypot(Bd(t).x, Bd(t).y)**3
-        normal = lambda t : Coordinate(-Bd(t).y, Bd(t).x)
-
-        #self.points = [PathPoint(0, P[0], Coordinate(-Bd(t).y, Bd(t).x), curv_n(t), curv_d(t), 0 )]
-        self.points = [PathPoint(0, P[0], normal(0), curv_n(0), curv_d(0), 0)]
+        self.distances = [0]    # cumulative distances for each 't'
+        prev_pt = self.B(0)
         for i in range(self.nr_points):
             t = (i + 1) / self.nr_points
+            pt = self.B(t)
+            self.distances.append(self.distances[-1] + hypot(prev_pt.x - pt.x, prev_pt.y - pt.y))
+            prev_pt = pt
 
-            prev = self.points[-1]
-            pt = B(t)
-            self.points.append(PathPoint(t, pt, normal(t) , curv_n(t), curv_d(t), prev.c_dist + hypot(prev.coord.x - pt.x, prev.coord.y - pt.y)))
-
-        self.length = self.points[-1].c_dist
+        self.length = self.distances[-1]
 
     @classmethod
     def quadratic(cls, start, c, end):
@@ -337,42 +332,37 @@ class BezierCurve(PathSegment):
     def subdivide(self, nr_parts, start_offset=0):
         pass
 
-    def interpolate(self, idx0, ratio):
-        step = 1 / self.nr_points
-        p0 = self.points[idx0]
-        p1 = self.points[idx0 + 1]
-        #for p in
-        return PathPoint(
-            ((1 - ratio) * p0.t + ratio * p1.t) ,
-            ((1 - ratio) * p0.coord + ratio * p1.coord),
-            ((1 - ratio) * p0.normal + ratio * p1.normal),
-            ((1 - ratio) * p0.curv_n + ratio * p1.curv_n),
-            ((1 - ratio) * p0.curv_d + ratio * p1.curv_d),
-            ((1 - ratio) * p0.c_dist + ratio * p1.c_dist))
-
 
     def pathpoint_at_t(self, t):
-        """interpolated pathpoint on the curve from t=0 to point at t."""
+        """pathpoint on the curve from t=0 to point at t."""
         step = 1 / self.nr_points
         pt_idx = int(t / step)
-        ip_fact = t - pt_idx * step
-      #  p0 = self.points[pt_idx]
-      #  p1 = self.points[pt_idx + 1]
-        return self.interpolate(pt_idx, ip_fact / step)
+        #print "index", pt_idx, self.distances[pt_idx]
+        length = self.distances[pt_idx]
+        ip_fact = (t - pt_idx * step) / step
+        if ip_fact > 0: # not a perfect match, need to interpolate
+            length += ip_fact * (self.distances[pt_idx + 1] - self.distances[pt_idx])
+        curv_n = lambda t : self.Bd(t).x * self.Bdd(t).y - self.Bd(t).y * self.Bdd(t).x
+        curv_d = lambda t : hypot(self.Bd(t).x, self.Bd(t).y)**3
+        normal = lambda t : Coordinate(-self.Bd(t).y, self.Bd(t).x)
 
-    def pathpoint_at_length(self, length):
-        """interpolated pathpoint on the curve at given length"""
-        i_min = 0
-        i_max = self.nr_points + 1
+        return PathPoint(t, self.B(t), normal(t), curv_n(t), curv_d(t), length)
 
-        while i_max - i_min > 1:  # binary search
-            i_half = i_min + (i_max - i_min) // 2
-            if self.points[i_half].c_dist <= length:
-                i_min = i_half
+
+    def t_at_length(self, length):
+        """interpolated t where the curve is at the given length"""
+        i_small = 0
+        i_big = self.nr_points + 1
+
+        while i_big - i_small > 1:  # binary search
+            i_half = i_small + (i_big - i_small) // 2
+            if self.distances[i_half] <= length:
+                i_small = i_half
             else:
-                i_max = i_half
+                i_big = i_half
 
-        return self.interpolate(i_min, (length - self.points[i_min].c_dist) / self.length)
+        small_dist = self.distances[i_small]
+        return  i_small / self.nr_points + (length - small_dist) * (self.distances[i_big] - small_dist) # interpolated length
 
 class Ellipse():
     nrPoints = 1000 #used for piecewise linear circumference calculation (ellipse circumference is tricky to calculate)

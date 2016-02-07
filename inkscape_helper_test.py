@@ -98,20 +98,18 @@ class TestBezier(unittest.TestCase, Effect):
 
     def test_quadratic_bezier(self):
         quadratic = BezierCurve([C10, C11, C01])
-        self.assertEqual(quadratic.points[0].coord, C10, 'start point')
-        self.assertEqual(quadratic.points[-1].coord, C01, 'end point')
+        self.assertEqual(quadratic.pathpoint_at_t(0).coord, C10, 'start point')
+        self.assertEqual(quadratic.pathpoint_at_t(1).coord, C01, 'end point')
 
     def test_cubic_bezier(self):
         cubic = BezierCurve([C10, C11, C00, C01])
-        self.assertEqual(cubic.points[0].coord, C10, 'start point')
-        self.assertEqual(cubic.points[-1].coord, C01, 'end point')
+        self.assertEqual(cubic.pathpoint_at_t(0).coord, C10, 'start point')
+        self.assertEqual(cubic.pathpoint_at_t(1).coord, C01, 'end point')
 
     def test_bezier_length(self):
         line = BezierCurve([C00, C10, C10 * 2])
-        print line.pathpoint_at_t(0.5)
         self.assertEqual(line.pathpoint_at_t(0.5).coord, C10, 'midpoint by t')
-        print line.pathpoint_at_length(1)
-        self.assertEqual(line.pathpoint_at_length(1).coord, C10, 'midpoint by length')
+        self.assertEqual(line.t_at_length(1), 0.5, 'midpoint t by length')
 
 
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
