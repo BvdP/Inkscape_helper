@@ -109,8 +109,9 @@ class TestBezier(unittest.TestCase, Effect):
     def test_bezier_length(self):
         line = BezierCurve([C00, C10, C10 * 2])
         self.assertEqual(line.pathpoint_at_t(0.5).coord, C10, 'midpoint by t')
+        self.assertEqual(line.t_at_length(0), 0, 'starting point t by length')
         self.assertEqual(line.t_at_length(1), 0.5, 'midpoint t by length')
-
+        self.assertEqual(line.t_at_length(2), 1, 'endpoint t by length')
 
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
 intersection_t = unittest.TestLoader().loadTestsFromTestCase(TestIntersection)

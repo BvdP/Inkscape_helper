@@ -351,6 +351,8 @@ class BezierCurve(PathSegment):
 
     def t_at_length(self, length):
         """interpolated t where the curve is at the given length"""
+        if length == self.length:
+            return 1
         i_small = 0
         i_big = self.nr_points + 1
 
