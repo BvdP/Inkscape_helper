@@ -144,7 +144,7 @@ class Coordinate:
 
     @property
     def r(self):
-        return sqrt(self.x ** 2 + self.y ** 2)
+        return hypot(self.x, self.y)
 
     #@r.setter
     #def r(self, value):
@@ -253,7 +253,7 @@ class Path:
         self.nodes.pop()
 
 
-PathPoint = namedtuple('PathPoint', 't coord normal curv_n curv_d c_dist')
+PathPoint = namedtuple('PathPoint', 't coord tangent curv_n curv_d c_dist')
 
 class PathSegment():
 
@@ -264,12 +264,11 @@ class PathSegment():
     def lenth(self):
         raise NotImplementedError
 
-    def subdivide(self, nr_parts):
+    def subdivide(self, part_length):
         raise NotImplementedError
     # also need:
-    #   point and normal at distance D from start
-    #   curvature
-    #   find a way do do curvature dependent spacingm
+
+    #   find a way do do curvature dependent spacing
     #       - based on deviation from a standard radius?
     #       - or ratio between thickness and curvature?
     #def point_at_distance(d):
@@ -284,10 +283,15 @@ class Line(PathSegment):
 
     @property
     def length(self):
-        return sqrt((start.x - end.x)**2 + (start.y - end.y)**2)
+        return (self.end - self.start).r
 
-    def subdivide(self, nr_parts):
-        return [PathPoint(k/self.length, start + k * (end - start) / self.length, 0, 0) for k in range(nr_parts)]
+    def subdivide(self, part_length, start_offset=0): # note: start_offset should be smaller than part_length
+        nr_parts = int((self.length - start_offset) // part_length)
+        k_o = start_offset / self.length
+        k2t = lambda k : (k + k_o) * part_length /self.length
+        pp = lambda t : PathPoint(t, self.start + t * (self.end - self.start), 0, 0, 1, t * self.length)
+        points = [pp(k2t(k)) for k in range(nr_parts + 1)]
+        return(points, self.length - points[-1].c_dist)
 
 
 
@@ -329,7 +333,7 @@ class BezierCurve(PathSegment):
     def length(self):
         return self.length
 
-    def subdivide(self, nr_parts, start_offset=0):
+    def subdivide(self, part_length, start_offset=0):
         pass
 
 
@@ -344,9 +348,9 @@ class BezierCurve(PathSegment):
             length += ip_fact * (self.distances[pt_idx + 1] - self.distances[pt_idx])
         curv_n = lambda t : self.Bd(t).x * self.Bdd(t).y - self.Bd(t).y * self.Bdd(t).x
         curv_d = lambda t : hypot(self.Bd(t).x, self.Bd(t).y)**3
-        normal = lambda t : Coordinate(-self.Bd(t).y, self.Bd(t).x)
+        tangent = lambda t : self.Bd(t)
 
-        return PathPoint(t, self.B(t), normal(t), curv_n(t), curv_d(t), length)
+        return PathPoint(t, self.B(t), tangent(t), curv_n(t), curv_d(t), length)
 
 
     def t_at_length(self, length):
