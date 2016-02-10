@@ -92,9 +92,8 @@ class TestPath(unittest.TestCase, Effect):
         self.assertEqual(p.nodes, ['M {0} {1}'.format(0.0, 0.0), 'l {0} {1}'.format(1.0, 1.0)])
 
 
-class TestBezier(unittest.TestCase, Effect):
+class TestPathSegment(unittest.TestCase, Effect):
     #def setUp(self):
-
 
     def test_quadratic_bezier(self):
         quadratic = BezierCurve([C10, C11, C01])
@@ -113,12 +112,17 @@ class TestBezier(unittest.TestCase, Effect):
         self.assertEqual(line.t_at_length(1), 0.5, 'midpoint t by length')
         self.assertEqual(line.t_at_length(2), 1, 'endpoint t by length')
 
+    def test_line_segment(self):
+        line = Line(C00, C11)
+
+        #self.assertEqual(line.subdivide(0.5, 0.1),, 'subdivide in two parts')
+
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
 intersection_t = unittest.TestLoader().loadTestsFromTestCase(TestIntersection)
 path_t = unittest.TestLoader().loadTestsFromTestCase(TestPath)
-bezier_t = unittest.TestLoader().loadTestsFromTestCase(TestBezier)
+segment_t = unittest.TestLoader().loadTestsFromTestCase(TestPathSegment)
 
 
-suite = unittest.TestSuite([coordinate_t, intersection_t, path_t, bezier_t])
+suite = unittest.TestSuite([coordinate_t, intersection_t, path_t, segment_t])
 unittest.TextTestRunner(verbosity=2).run(suite)
 #    unittest.main()
