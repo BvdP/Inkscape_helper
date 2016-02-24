@@ -113,9 +113,8 @@ class TestPathSegment(unittest.TestCase, Effect):
         self.assertEqual(line.t_at_length(2), 1, 'endpoint t by length')
 
     def test_line_segment(self):
-        line = Line(C00, C11)
-
-        #self.assertEqual(line.subdivide(0.5, 0.1),, 'subdivide in two parts')
+        line = Line(C01, C10)
+        self.assertEqual(line.subdivide(0.4, 0.05)[-1],sqrt(2) - 0.05 - 3 * 0.4, 'remaining length of subdivided line')
 
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
 intersection_t = unittest.TestLoader().loadTestsFromTestCase(TestIntersection)
