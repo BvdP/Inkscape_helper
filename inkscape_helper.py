@@ -288,7 +288,7 @@ class Line(PathSegment):
     def subdivide(self, part_length, start_offset=0): # note: start_offset should be smaller than part_length
         nr_parts = int((self.length - start_offset) // part_length)
         k_o = start_offset / self.length
-        k2t = lambda k : (k + k_o) * part_length /self.length
+        k2t = lambda k : k_o + k * part_length / self.length
         pp = lambda t : PathPoint(t, self.start + t * (self.end - self.start), 0, 0, 1, t * self.length)
         points = [pp(k2t(k)) for k in range(nr_parts + 1)]
         return(points, self.length - points[-1].c_dist)
