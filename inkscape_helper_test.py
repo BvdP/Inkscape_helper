@@ -112,9 +112,18 @@ class TestPathSegment(unittest.TestCase, Effect):
         self.assertEqual(line.t_at_length(1), 0.5, 'midpoint t by length')
         self.assertEqual(line.t_at_length(2), 1, 'endpoint t by length')
 
-    def test_line_segment(self):
+    def test_line_subdivide(self):
         line = Line(C01, C10)
         self.assertEqual(line.subdivide(0.4, 0.05)[-1],sqrt(2) - 0.05 - 3 * 0.4, 'remaining length of subdivided line')
+
+    def test_bezier_subdivide(self):
+        quadr = BezierCurve([C00, C11, C11 * 2])
+        twoparts, rest = quadr.subdivide(sqrt(2))
+        #print twoparts, rest
+        self.assertEqual(twoparts[1].coord, C11, 'subdivide quadratic bezier in two parts')
+        cubic = BezierCurve([C00, C11, C11 * 2, C11 * 3])
+        threeparts, rest = cubic.subdivide(sqrt(2))
+        self.assertEqual(threeparts[1].coord, C11, 'subdivide cubic bezier in three parts')
 
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
 intersection_t = unittest.TestLoader().loadTestsFromTestCase(TestIntersection)
