@@ -253,7 +253,7 @@ class Path:
         self.nodes.pop()
 
 
-PathPoint = namedtuple('PathPoint', 't coord tangent curv_n curv_d c_dist')
+PathPoint = namedtuple('PathPoint', 't coord tangent curvature c_dist')
 
 class PathSegment():
 
@@ -289,7 +289,7 @@ class Line(PathSegment):
         nr_parts = int((self.length - start_offset) // part_length)
         k_o = start_offset / self.length
         k2t = lambda k : k_o + k * part_length / self.length
-        pp = lambda t : PathPoint(t, self.start + t * (self.end - self.start), 0, 0, 1, t * self.length)
+        pp = lambda t : PathPoint(t, self.start + t * (self.end - self.start), self.end - self.start, 0, t * self.length)
         points = [pp(k2t(k)) for k in range(nr_parts + 1)]
         return(points, self.length - points[-1].c_dist)
 
@@ -301,12 +301,15 @@ class BezierCurve(PathSegment):
 
         if len(P) == 3: # quadratic
             self.B = lambda t : (1 - t)**2 * P[0] + 2 * (1 - t) * t * P[1] + t**2 * P[2]
-            self.Bd = lambda t : 2 * (1 - t) * (P[1] - P[0]) + 2 * t * (P[2] - P[1])
-            self.Bdd = lambda t : 2 * (P[2] - 2 * P[1] + P[0])
+            Bd = lambda t : 2 * (1 - t) * (P[1] - P[0]) + 2 * t * (P[2] - P[1])
+            Bdd = lambda t : 2 * (P[2] - 2 * P[1] + P[0])
         elif len(P) == 4: #cubic
             self.B = lambda t : (1 - t)**3 * P[0] + 3 * (1 - t)**2 * t * P[1] + 3 * (1 - t) * t**2 * P[2] + t**3 * P[3]
-            self.Bd = lambda t : 3 * (1 - t)**2 * (P[1] - P[0]) + 6 * (1 - t) * t * (P[2] - P[1]) + 3 * t**2 * (P[3] - P[2])
-            self.Bdd = lambda t : 6 * (1 - t) * (P[2] - 2 * P[1] + P[0]) + 6 * t * (P[3] - 2 * P[2] + P[1])
+            Bd = lambda t : 3 * (1 - t)**2 * (P[1] - P[0]) + 6 * (1 - t) * t * (P[2] - P[1]) + 3 * t**2 * (P[3] - P[2])
+            Bdd = lambda t : 6 * (1 - t) * (P[2] - 2 * P[1] + P[0]) + 6 * t * (P[3] - 2 * P[2] + P[1])
+
+        self.tangent = lambda t : Bd(t)
+        self.curvature = lambda t : (Bd(t).x * Bdd(t).y - Bd(t).y * Bdd(t).x) / hypot(Bd(t).x, Bd(t).y)**3
 
         self.distances = [0]    # cumulative distances for each 't'
         prev_pt = self.B(0)
@@ -315,7 +318,6 @@ class BezierCurve(PathSegment):
             pt = self.B(t)
             self.distances.append(self.distances[-1] + hypot(prev_pt.x - pt.x, prev_pt.y - pt.y))
             prev_pt = pt
-
         self.length = self.distances[-1]
 
     @classmethod
@@ -334,7 +336,12 @@ class BezierCurve(PathSegment):
         return self.length
 
     def subdivide(self, part_length, start_offset=0):
-        pass
+        nr_parts = int((self.length - start_offset) / part_length + 10E-10)
+        print "NR PARTS:", nr_parts, self.length, start_offset, part_length, int(self.length / part_length), self.length - 2 * part_length
+        k_o = start_offset / self.length
+        k2t = lambda k : k_o + k * part_length / self.length
+        points = [self.pathpoint_at_t(k2t(k)) for k in range(nr_parts + 1)]
+        return(points, self.length - points[-1].c_dist)
 
 
     def pathpoint_at_t(self, t):
@@ -344,13 +351,11 @@ class BezierCurve(PathSegment):
         #print "index", pt_idx, self.distances[pt_idx]
         length = self.distances[pt_idx]
         ip_fact = (t - pt_idx * step) / step
-        if ip_fact > 0: # not a perfect match, need to interpolate
-            length += ip_fact * (self.distances[pt_idx + 1] - self.distances[pt_idx])
-        curv_n = lambda t : self.Bd(t).x * self.Bdd(t).y - self.Bd(t).y * self.Bdd(t).x
-        curv_d = lambda t : hypot(self.Bd(t).x, self.Bd(t).y)**3
-        tangent = lambda t : self.Bd(t)
 
-        return PathPoint(t, self.B(t), tangent(t), curv_n(t), curv_d(t), length)
+        if ip_fact > 0 and t < 1: # not a perfect match, need to interpolate
+            length += ip_fact * (self.distances[pt_idx + 1] - self.distances[pt_idx])
+
+        return PathPoint(t, self.B(t), self.tangent(t), self.curvature(t), length)
 
 
     def t_at_length(self, length):
