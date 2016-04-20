@@ -124,7 +124,8 @@ class TestPathSegment(unittest.TestCase, Effect):
             self.assertTrue(points[1].close_enough_to(twoparts[1].coord) , 'subdivide quadratic bezier in two parts')
             cubic = BezierCurve(points)
             threeparts, rest = cubic.subdivide(points[1].r)
-            self.assertTrue(points[1].close_enough_to(threeparts[1].coord), 'subdivide cubic bezier in three parts')
+            self.assertTrue(points[1].close_enough_to(threeparts[1].coord), 'subdivide cubic bezier in three parts, 1st point')
+            self.assertTrue(points[2].close_enough_to(threeparts[2].coord), 'subdivide cubic bezier in three parts, 2nd point')
 
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
 intersection_t = unittest.TestLoader().loadTestsFromTestCase(TestIntersection)
