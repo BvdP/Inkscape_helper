@@ -176,6 +176,8 @@ class Coordinate:
     def __truediv__(self, quotient):
         return self.__div__(quotient)
 
+    def close_enough_to(self, other, limit=1E-9):
+        return (self - other).r < limit
 
 
 class Effect(inkex.Effect):
@@ -336,8 +338,7 @@ class BezierCurve(PathSegment):
         return self.length
 
     def subdivide(self, part_length, start_offset=0):
-        nr_parts = int((self.length - start_offset) / part_length + 10E-10)
-        print "NR PARTS:", nr_parts, self.length, start_offset, part_length, int(self.length / part_length), self.length - 2 * part_length
+        nr_parts = int((self.length - start_offset) // part_length)
         k_o = start_offset / self.length
         k2t = lambda k : k_o + k * part_length / self.length
         points = [self.pathpoint_at_t(k2t(k)) for k in range(nr_parts + 1)]
@@ -348,7 +349,6 @@ class BezierCurve(PathSegment):
         """pathpoint on the curve from t=0 to point at t."""
         step = 1 / self.nr_points
         pt_idx = int(t / step)
-        #print "index", pt_idx, self.distances[pt_idx]
         length = self.distances[pt_idx]
         ip_fact = (t - pt_idx * step) / step
 
