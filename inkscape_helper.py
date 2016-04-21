@@ -315,15 +315,16 @@ class BezierCurve(PathSegment):
 
         if len(P) == 3: # quadratic
             self.B = lambda t : (1 - t)**2 * P[0] + 2 * (1 - t) * t * P[1] + t**2 * P[2]
-            Bd = lambda t : 2 * (1 - t) * (P[1] - P[0]) + 2 * t * (P[2] - P[1])
-            Bdd = lambda t : 2 * (P[2] - 2 * P[1] + P[0])
+            self.Bd = lambda t : 2 * (1 - t) * (P[1] - P[0]) + 2 * t * (P[2] - P[1])
+            self.Bdd = lambda t : 2 * (P[2] - 2 * P[1] + P[0])
         elif len(P) == 4: #cubic
             self.B = lambda t : (1 - t)**3 * P[0] + 3 * (1 - t)**2 * t * P[1] + 3 * (1 - t) * t**2 * P[2] + t**3 * P[3]
-            Bd = lambda t : 3 * (1 - t)**2 * (P[1] - P[0]) + 6 * (1 - t) * t * (P[2] - P[1]) + 3 * t**2 * (P[3] - P[2])
-            Bdd = lambda t : 6 * (1 - t) * (P[2] - 2 * P[1] + P[0]) + 6 * t * (P[3] - 2 * P[2] + P[1])
+            self.Bd = lambda t : 3 * (1 - t)**2 * (P[1] - P[0]) + 6 * (1 - t) * t * (P[2] - P[1]) + 3 * t**2 * (P[3] - P[2])
+            self.Bdd = lambda t : 6 * (1 - t) * (P[2] - 2 * P[1] + P[0]) + 6 * t * (P[3] - 2 * P[2] + P[1])
 
-        self.tangent = lambda t : Bd(t)
-        self.curvature = lambda t : (Bd(t).x * Bdd(t).y - Bd(t).y * Bdd(t).x) / hypot(Bd(t).x, Bd(t).y)**3
+        self.tangent = lambda t : self.Bd(t)
+ #       self.curvature = lambda t : (Bd(t).x * Bdd(t).y - Bd(t).y * Bdd(t).x) / hypot(Bd(t).x, Bd(t).y)**3
+
 
         self.distances = [0]    # cumulative distances for each 't'
         prev_pt = self.B(0)
@@ -333,6 +334,14 @@ class BezierCurve(PathSegment):
             self.distances.append(self.distances[-1] + hypot(prev_pt.x - pt.x, prev_pt.y - pt.y))
             prev_pt = pt
         self.length = self.distances[-1]
+
+    def curvature(self, t):
+        n = self.Bd(t).x * self.Bdd(t).y - self.Bd(t).y * self.Bdd(t).x
+        d = hypot(self.Bd(t).x, self.Bd(t).y)**3
+        if d == 0:
+            return n * float('inf')
+        else:
+            return n / d
 
     @classmethod
     def quadratic(cls, start, c, end):
