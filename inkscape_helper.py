@@ -268,6 +268,13 @@ class PathSegment():
 
     def subdivide(self, part_length):
         raise NotImplementedError
+
+    def pathpoint_at_t(self, t):
+        raise NotImplementedError
+
+    def t_at_length(self, length):
+        raise NotImplementedError
+
     # also need:
 
     #   find a way do do curvature dependent spacing
@@ -282,6 +289,7 @@ class Line(PathSegment):
     def __init__(self, start, end):
         self.start = start
         self.end = end
+        self.pp = lambda t : PathPoint(t, self.start + t * (self.end - self.start), self.end - self.start, 0, t * self.length)
 
     @property
     def length(self):
@@ -291,10 +299,14 @@ class Line(PathSegment):
         nr_parts = int((self.length - start_offset) // part_length)
         k_o = start_offset / self.length
         k2t = lambda k : k_o + k * part_length / self.length
-        pp = lambda t : PathPoint(t, self.start + t * (self.end - self.start), self.end - self.start, 0, t * self.length)
-        points = [pp(k2t(k)) for k in range(nr_parts + 1)]
+        points = [self.pp(k2t(k)) for k in range(nr_parts + 1)]
         return(points, self.length - points[-1].c_dist)
 
+    def pathpoint_at_t(self, t):
+        return self.pp(t)
+
+    def t_at_length(self, length):
+        return length / self.length()
 
 
 class BezierCurve(PathSegment):
