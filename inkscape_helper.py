@@ -397,25 +397,27 @@ class BezierCurve(PathSegment):
         return  i_small / self.nr_points + (length - small_dist) * (self.distances[i_big] - small_dist) # interpolated length
 
 class Ellipse():
-    nrPoints = 1000 #used for piecewise linear circumference calculation (ellipse circumference is tricky to calculate)
+    nr_points = 10 #used for piecewise linear circumference calculation (ellipse circumference is tricky to calculate)
     # approximate circumfere: c = pi * (3 * (a + b) - sqrt(10 * a * b + 3 * (a ** 2 + b ** 2)))
 
-    def __init__(self, w, h):
-        self.h = h
-        self.w = w
-        EllipsePoint = namedtuple('EllipsePoint', 'angle coord cDist')
-        self.ellData = [EllipsePoint(0, Coordinate(w/2, 0), 0)] # (angle, x, y, cumulative distance from angle = 0)
+    def __init__(self, x_radius, y_radius):
+        self.y_radius = y_radius
+        self.x_radius = x_radius
+        #EllipsePoint = namedtuple('EllipsePoint', 'angle coord cDist')
+        self.ellData = [EllipsePoint(0, Coordinate(x_radius, 0), 0)] # (angle, x, y, cumulative distance from angle = 0)
         angle = 0
-        self.angleStep = 2 * pi / self.nrPoints
+        self.angleStep = 2 * pi / self.nr_points
         #note: the render angle (ra) corresponds to the angle from the ellipse center (ca) according to:
         # ca = atan(w/h * tan(ra))
-        for i in range(self.nrPoints):
+        for i in range(self.nr_points):
             angle += self.angleStep
             prev = self.ellData[-1]
-            x, y = w / 2 * cos(angle), h / 2 * sin(angle)
+            x, y = x_radius * cos(angle), y_radius * sin(angle)
             self.ellData.append(EllipsePoint(angle, Coordinate(x, y), prev.cDist + hypot(prev.coord.x - x, prev.coord.y - y)))
         self.circumference = self.ellData[-1].cDist
         #inkex.debug("circ: %d" % self.circumference)
+        self.tangent = lambda t : self.Bd(t)
+ #       self.curvature = lambda t : (Bd(t).x * Bdd(t).y - Bd(t).y * Bdd(t).x) / hypot(Bd(t).x, Bd(t).y)**3
 
     def rAngle(self, a):
         """Convert an angle measured from ellipse center to the angle used to generate ellData (used for lookups)"""
@@ -424,27 +426,27 @@ class Ellipse():
             cf = pi
         if a > 3 * pi / 2:
             cf = 2 * pi
-        return atan(self.w / self.h * tan(a)) + cf
+        return atan(self.x_radius / self.y_radius * tan(a)) + cf
 
     def coordinateFromAngle(self, angle):
         """Coordinate of the point at angle."""
-        return Coordinate(self.w / 2 * cos(angle), self.h / 2 * sin(angle))
+        return Coordinate(self.x_radius * cos(angle), self.y_radius * sin(angle))
 
     def notchCoordinate(self, angle, notchHeight):
         """Coordinate for a notch at the given angle. The notch is perpendicular to the ellipse."""
         angle %= (2 * pi)
         #some special cases to avoid divide by zero:
         if angle == 0:
-            return (0, Coordinate(self.w / 2 + notchHeight, 0))
+            return (0, Coordinate(self.x_radius + notchHeight, 0))
         elif angle == pi:
-            return (pi, Coordinate(-self.w / 2 - notchHeight, 0))
+            return (pi, Coordinate(-self.x_radius - notchHeight, 0))
         elif angle == pi / 2:
-            return(pi / 2, doc.Coordinate(0, self.h / 2 + notchHeight))
+            return(pi / 2, doc.Coordinate(0, self.y_radius + notchHeight))
         elif angle == 3 * pi / 2:
-            return(3 * pi / 2, Coordinate(0, -self.h / 2 - notchHeight))
+            return(3 * pi / 2, Coordinate(0, -self.y_radius - notchHeight))
 
-        x = self.w / 2 * cos(angle)
-        derivative = self.h / self.w * -x / sqrt((self.w / 2) ** 2 - x ** 2)
+        x = self.x_radius * cos(angle)
+        derivative = self.y_radius / self.x_radius * -x / sqrt((self.x_radius ) ** 2 - x ** 2)
         if angle > pi:
             derivative = -derivative
 
@@ -486,7 +488,7 @@ class Ellipse():
             absDist -= self.ellData[-1].cDist
 
         iMin = 0
-        iMax = self.nrPoints
+        iMax = self.nr_points
         count = 0
         while iMax - iMin > 1:  # binary search
             count += 1
