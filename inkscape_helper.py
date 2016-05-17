@@ -419,37 +419,28 @@ class Ellipse():
         self.tangent = lambda t : self.Bd(t)
  #       self.curvature = lambda t : (Bd(t).x * Bdd(t).y - Bd(t).y * Bdd(t).x) / hypot(Bd(t).x, Bd(t).y)**3
 
-    def rAngle(self, a):
-        """Convert an angle measured from ellipse center to the angle used to generate ellData (used for lookups)"""
-        cf = 0
-        if a > pi / 2:
-            cf = pi
-        if a > 3 * pi / 2:
-            cf = 2 * pi
-        return atan(self.x_radius / self.y_radius * tan(a)) + cf
+    def coordinate_at_theta(self, theta):
+        """Coordinate of the point at theta."""
+        return Coordinate(self.x_radius * cos(theta), self.y_radius * sin(theta))
 
-    def coordinateFromAngle(self, angle):
-        """Coordinate of the point at angle."""
-        return Coordinate(self.x_radius * cos(angle), self.y_radius * sin(angle))
-
-    def distFromAngles(self, a1, a2):
-        """Distance accross the surface from point at angle a2 to point at angle a2. Measured in CCW sense."""
-        i1 = int(self.rAngle(a1) / self.angleStep)
-        p1 = self.rAngle(a1) % self.angleStep
+    def dist_from_theta(self, theta_start, theta_end):
+        """Distance accross the surface from point at angle theta_end to point at angle theta_end. Measured in CCW sense."""
+        i1 = int(theta_start / self.angleStep)
+        p1 = theta_start % self.angleStep
         l1 = self.ellData[i1 + 1].cDist - self.ellData[i1].cDist
-        i2 = int(self.rAngle(a2) / self.angleStep)
-        p2 = self.rAngle(a2) % self.angleStep
+        i2 = int(theta_end / self.angleStep)
+        p2 = theta_end % self.angleStep
         l2 = self.ellData[i2 + 1].cDist - self.ellData[i2].cDist
-        if a1 <= a2:
+        if theta_start <= theta_end:
             len = self.ellData[i2].cDist - self.ellData[i1].cDist + l2 * p2 - l1 * p1
         else:
             len = self.circumference + self.ellData[i2].cDist - self.ellData[i1].cDist
         return len
 
-    def angleFromDist(self, startAngle, relDist):
-        """Returns the angle that you get when starting at startAngle and moving a distance (dist) in CCW direction"""
-        si = int(self.rAngle(startAngle) / self.angleStep)
-        p = self.rAngle(startAngle) % self.angleStep
+    def theta_from_dist(self, theta_start, relDist):
+        """Returns the angle that you get when starting at theta_start and moving a distance (dist) in CCW direction"""
+        si = int(theta_start / self.angleStep)
+        p = theta_start % self.angleStep
 
         l = self.ellData[si + 1].cDist - self.ellData[si].cDist
 
