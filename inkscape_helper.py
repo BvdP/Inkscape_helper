@@ -432,33 +432,6 @@ class Ellipse():
         """Coordinate of the point at angle."""
         return Coordinate(self.x_radius * cos(angle), self.y_radius * sin(angle))
 
-    def notchCoordinate(self, angle, notchHeight):
-        """Coordinate for a notch at the given angle. The notch is perpendicular to the ellipse."""
-        angle %= (2 * pi)
-        #some special cases to avoid divide by zero:
-        if angle == 0:
-            return (0, Coordinate(self.x_radius + notchHeight, 0))
-        elif angle == pi:
-            return (pi, Coordinate(-self.x_radius - notchHeight, 0))
-        elif angle == pi / 2:
-            return(pi / 2, doc.Coordinate(0, self.y_radius + notchHeight))
-        elif angle == 3 * pi / 2:
-            return(3 * pi / 2, Coordinate(0, -self.y_radius - notchHeight))
-
-        x = self.x_radius * cos(angle)
-        derivative = self.y_radius / self.x_radius * -x / sqrt((self.x_radius ) ** 2 - x ** 2)
-        if angle > pi:
-            derivative = -derivative
-
-        normal = -1 / derivative
-        nAngle = atan(normal)
-        if angle > pi / 2 and angle < 3 * pi / 2:
-            nAngle += pi
-
-        nCoordinate = self.coordinateFromAngle(angle) + Coordinate(cos(nAngle), sin(nAngle)) * notchHeight
-        return nCoordinate
-
-
     def distFromAngles(self, a1, a2):
         """Distance accross the surface from point at angle a2 to point at angle a2. Measured in CCW sense."""
         i1 = int(self.rAngle(a1) / self.angleStep)
