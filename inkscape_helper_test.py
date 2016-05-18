@@ -127,12 +127,29 @@ class TestPathSegment(unittest.TestCase, Effect):
             self.assertTrue(points[1].close_enough_to(threeparts[1].coord), 'subdivide cubic bezier in three parts, 1st point')
             self.assertTrue(points[2].close_enough_to(threeparts[2].coord), 'subdivide cubic bezier in three parts, 2nd point')
 
+    def test_ellipse_subdivide(self):
+        pass
+
+class TestEllipse(unittest.TestCase, Effect):
+    def setUp(self):
+        self.circle = Ellipse(10, 10)
+
+    def test_coordinate_at_theta(self):
+        self.assertEqual(self.circle.coordinate_at_theta(0), Coordinate(10, 0), 'coordinate at angle 0')
+
+    def test_circle(self):
+        print self.circle.circumference
+        self.assertEqual(self.circle.circumference, 20 * pi, 'circumference circle')
+
+
+
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
 intersection_t = unittest.TestLoader().loadTestsFromTestCase(TestIntersection)
 path_t = unittest.TestLoader().loadTestsFromTestCase(TestPath)
+ellipse_t = unittest.TestLoader().loadTestsFromTestCase(TestEllipse)
 segment_t = unittest.TestLoader().loadTestsFromTestCase(TestPathSegment)
 
 
-suite = unittest.TestSuite([coordinate_t, intersection_t, path_t, segment_t])
+suite = unittest.TestSuite([coordinate_t, intersection_t, path_t, segment_t, ellipse_t])
 unittest.TextTestRunner(verbosity=2).run(suite)
 #    unittest.main()
