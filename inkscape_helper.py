@@ -397,70 +397,68 @@ class BezierCurve(PathSegment):
         return  i_small / self.nr_points + (length - small_dist) * (self.distances[i_big] - small_dist) # interpolated length
 
 class Ellipse():
+    """Used as a base class for EllipticArc."""
     nr_points = 10 #used for piecewise linear circumference calculation (ellipse circumference is tricky to calculate)
     # approximate circumfere: c = pi * (3 * (a + b) - sqrt(10 * a * b + 3 * (a ** 2 + b ** 2)))
 
     def __init__(self, x_radius, y_radius):
         self.y_radius = y_radius
         self.x_radius = x_radius
-        #EllipsePoint = namedtuple('EllipsePoint', 'angle coord cDist')
-        self.ellData = [EllipsePoint(0, Coordinate(x_radius, 0), 0)] # (angle, x, y, cumulative distance from angle = 0)
+        self.distances = [0]
         angle = 0
-        self.angleStep = 2 * pi / self.nr_points
+        self.angle_step = 2 * pi / self.nr_points
         #note: the render angle (ra) corresponds to the angle from the ellipse center (ca) according to:
         # ca = atan(w/h * tan(ra))
         for i in range(self.nr_points):
-            angle += self.angleStep
-            prev = self.ellData[-1]
+            angle += self.angle_step
+            prev_dist = self.distances[-1]
+            prev_coord = self.coordinate_at_theta(angle)
             x, y = x_radius * cos(angle), y_radius * sin(angle)
-            self.ellData.append(EllipsePoint(angle, Coordinate(x, y), prev.cDist + hypot(prev.coord.x - x, prev.coord.y - y)))
-        self.circumference = self.ellData[-1].cDist
-        #inkex.debug("circ: %d" % self.circumference)
-        self.tangent = lambda t : self.Bd(t)
- #       self.curvature = lambda t : (Bd(t).x * Bdd(t).y - Bd(t).y * Bdd(t).x) / hypot(Bd(t).x, Bd(t).y)**3
+            self.distances.append(prev_dist + hypot(prev_coord.x - x, prev_coord.y - y)
+
+    @property
+    def circumference(self):
+        return self.distances[-1]
 
     def coordinate_at_theta(self, theta):
         """Coordinate of the point at theta."""
         return Coordinate(self.x_radius * cos(theta), self.y_radius * sin(theta))
 
     def dist_from_theta(self, theta_start, theta_end):
-        """Distance accross the surface from point at angle theta_end to point at angle theta_end. Measured in CCW sense."""
-        i1 = int(theta_start / self.angleStep)
-        p1 = theta_start % self.angleStep
-        l1 = self.ellData[i1 + 1].cDist - self.ellData[i1].cDist
-        i2 = int(theta_end / self.angleStep)
-        p2 = theta_end % self.angleStep
-        l2 = self.ellData[i2 + 1].cDist - self.ellData[i2].cDist
+        """Distance accross the surface from point at angle theta_end to point at angle theta_end. Measured in positive(CCW) sense."""
+        i1 = int(theta_start / self.angle_step)
+        p1 = theta_start % self.angle_step
+        l1 = self.disstances[i1 + 1] - self.disstances[i1]
+        i2 = int(theta_end / self.angle_step)
+        p2 = theta_end % self.angle_step
+        l2 = self.disstances[i2 + 1] - self.disstances[i2]
         if theta_start <= theta_end:
-            len = self.ellData[i2].cDist - self.ellData[i1].cDist + l2 * p2 - l1 * p1
+            len = self.disstances[i2] - self.disstances[i1] + l2 * p2 - l1 * p1
         else:
-            len = self.circumference + self.ellData[i2].cDist - self.ellData[i1].cDist
+            len = self.circumference + self.disstances[i2] - self.disstances[i1]
         return len
 
-    def theta_from_dist(self, theta_start, relDist):
+    def theta_from_dist(self, theta_start, dist):
         """Returns the angle that you get when starting at theta_start and moving a distance (dist) in CCW direction"""
-        si = int(theta_start / self.angleStep)
-        p = theta_start % self.angleStep
+        si = int(theta_start / self.angle_step)
+        p = theta_start % self.angle_step
 
-        l = self.ellData[si + 1].cDist - self.ellData[si].cDist
+        piece_length = self.disstances[si + 1] - self.disstances[si]
 
-        startDist = self.ellData[si].cDist + p * l
+        start_dist = self.disstances[si] + p * piece_length
 
-        absDist = relDist + startDist
+        end_dist = dist + start_dist
 
-        if absDist > self.ellData[-1].cDist:  # wrap around zero angle
-            absDist -= self.ellData[-1].cDist
+        if end_dist > self.circumference:  # wrap around zero angle
+            end_dist -= self.circumference
 
-        iMin = 0
-        iMax = self.nr_points
-        count = 0
-        while iMax - iMin > 1:  # binary search
-            count += 1
-            iHalf = iMin + (iMax - iMin) // 2
-            if self.ellData[iHalf].cDist < absDist:
-                iMin = iHalf
+        min_idx = 0
+        max_idx = self.nr_points
+        while max_idx - min_idx > 1:  # binary search
+            half_idx = min_idx + (max_idx - min_idx) // 2
+            if self.disstances[half_idx] < end_dist:
+                min_idx = half_idx
             else:
-                iMax = iHalf
-
-        stepDist = self.ellData[iMax].cDist - self.ellData[iMin].cDist
-        return self.ellData[iMin].angle + self.angleStep * (absDist - self.ellData[iMin].cDist)/stepDist
+                max_idx = half_idx
+        step_dist = self.disstances[max_idx] - self.disstances[min_idx]
+        return (min_idx + (end_dist - self.distances[min_ixd]) / step_dist) * self.angle_step
