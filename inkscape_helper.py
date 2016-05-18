@@ -398,23 +398,23 @@ class BezierCurve(PathSegment):
 
 class Ellipse():
     """Used as a base class for EllipticArc."""
-    nr_points = 10 #used for piecewise linear circumference calculation (ellipse circumference is tricky to calculate)
+    nr_points = 100 #used for piecewise linear circumference calculation (ellipse circumference is tricky to calculate)
     # approximate circumfere: c = pi * (3 * (a + b) - sqrt(10 * a * b + 3 * (a ** 2 + b ** 2)))
 
     def __init__(self, x_radius, y_radius):
         self.y_radius = y_radius
         self.x_radius = x_radius
         self.distances = [0]
-        angle = 0
+        theta = 0
         self.angle_step = 2 * pi / self.nr_points
         #note: the render angle (ra) corresponds to the angle from the ellipse center (ca) according to:
         # ca = atan(w/h * tan(ra))
         for i in range(self.nr_points):
-            angle += self.angle_step
             prev_dist = self.distances[-1]
-            prev_coord = self.coordinate_at_theta(angle)
-            x, y = x_radius * cos(angle), y_radius * sin(angle)
-            self.distances.append(prev_dist + hypot(prev_coord.x - x, prev_coord.y - y)
+            prev_coord = self.coordinate_at_theta(theta)
+            theta += self.angle_step
+            x, y = x_radius * cos(theta), y_radius * sin(theta)
+            self.distances.append(prev_dist + hypot(prev_coord.x - x, prev_coord.y - y))
 
     @property
     def circumference(self):
