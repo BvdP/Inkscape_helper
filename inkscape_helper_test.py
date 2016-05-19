@@ -130,17 +130,24 @@ class TestPathSegment(unittest.TestCase, Effect):
     def test_ellipse_subdivide(self):
         pass
 
+def pretty_close(a ,b):
+    return abs(a - b) < 1E-4  #TODO: current ellipse and bezier interpolation is always on the short side
+
 class TestEllipse(unittest.TestCase, Effect):
     def setUp(self):
         self.circle = Ellipse(10, 10)
 
     def test_coordinate_at_theta(self):
-        self.assertEqual(self.circle.coordinate_at_theta(0), Coordinate(10, 0), 'coordinate at angle 0')
+        ell = Ellipse(12,8)
+        self.assertEqual(ell.coordinate_at_theta(0), Coordinate(12, 0), 'coordinate at angle 0')
+        self.assertTrue(Coordinate(0, 8).close_enough_to(ell.coordinate_at_theta(pi/2)), 'coordinate at angle pi/2')
+        self.assertTrue(Coordinate(-12, 0).close_enough_to(ell.coordinate_at_theta(pi)), 'coordinate at angle pi')
+        self.assertTrue(Coordinate(0, -8).close_enough_to(ell.coordinate_at_theta(3*pi/2)), 'coordinate at angle 3*pi/2')
 
     def test_circle(self):
-        print self.circle.circumference
-        self.assertEqual(self.circle.circumference, 20 * pi, 'circumference circle')
-
+        self.assertTrue(pretty_close(self.circle.circumference, 20 * pi), 'circumference circle')
+        self.assertTrue(pretty_close(self.circle.dist_from_theta(0, pi), 10 * pi))
+        self.assertTrue(pretty_close(self.circle.theta_from_dist(0, 10 * pi), pi))
 
 
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
