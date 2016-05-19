@@ -398,7 +398,7 @@ class BezierCurve(PathSegment):
 
 class Ellipse():
     """Used as a base class for EllipticArc."""
-    nr_points = 100 #used for piecewise linear circumference calculation (ellipse circumference is tricky to calculate)
+    nr_points = 1024 #used for piecewise linear circumference calculation (ellipse circumference is tricky to calculate)
     # approximate circumfere: c = pi * (3 * (a + b) - sqrt(10 * a * b + 3 * (a ** 2 + b ** 2)))
 
     def __init__(self, x_radius, y_radius):
@@ -428,14 +428,14 @@ class Ellipse():
         """Distance accross the surface from point at angle theta_end to point at angle theta_end. Measured in positive(CCW) sense."""
         i1 = int(theta_start / self.angle_step)
         p1 = theta_start % self.angle_step
-        l1 = self.disstances[i1 + 1] - self.disstances[i1]
+        l1 = self.distances[i1 + 1] - self.distances[i1]
         i2 = int(theta_end / self.angle_step)
         p2 = theta_end % self.angle_step
-        l2 = self.disstances[i2 + 1] - self.disstances[i2]
+        l2 = self.distances[i2 + 1] - self.distances[i2]
         if theta_start <= theta_end:
-            len = self.disstances[i2] - self.disstances[i1] + l2 * p2 - l1 * p1
+            len = self.distances[i2] - self.distances[i1] + l2 * p2 - l1 * p1
         else:
-            len = self.circumference + self.disstances[i2] - self.disstances[i1]
+            len = self.circumference + self.distances[i2] - self.distances[i1]
         return len
 
     def theta_from_dist(self, theta_start, dist):
@@ -443,9 +443,9 @@ class Ellipse():
         si = int(theta_start / self.angle_step)
         p = theta_start % self.angle_step
 
-        piece_length = self.disstances[si + 1] - self.disstances[si]
+        piece_length = self.distances[si + 1] - self.distances[si]
 
-        start_dist = self.disstances[si] + p * piece_length
+        start_dist = self.distances[si] + p * piece_length
 
         end_dist = dist + start_dist
 
@@ -456,9 +456,9 @@ class Ellipse():
         max_idx = self.nr_points
         while max_idx - min_idx > 1:  # binary search
             half_idx = min_idx + (max_idx - min_idx) // 2
-            if self.disstances[half_idx] < end_dist:
+            if self.distances[half_idx] < end_dist:
                 min_idx = half_idx
             else:
                 max_idx = half_idx
-        step_dist = self.disstances[max_idx] - self.disstances[min_idx]
-        return (min_idx + (end_dist - self.distances[min_ixd]) / step_dist) * self.angle_step
+        step_dist = self.distances[max_idx] - self.distances[min_idx]
+        return (min_idx + (end_dist - self.distances[min_idx]) / step_dist) * self.angle_step
