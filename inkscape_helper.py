@@ -131,23 +131,34 @@ def inner_product(a, b):
     return a.x * b.x + a.y * b.y
 
 class Coordinate:
+    """
+    Basic (x, y) coordinate class (or should it be called vector?) which allows some simple operations.
+    """
     def __init__(self, x, y):
         self.x = float(x)
         self.y = float(y)
 
+    #polar coordinates
     @property
     def t(self):
         return atan2(self.y, self.x)
 
-    #@t.setter
-    #def t(self, value):
+    @t.setter
+    def t(self, value):
+        length = self.r
+        self.x = cos(value) * length
+        self.y = sit(value) * length
+
 
     @property
     def r(self):
         return hypot(self.x, self.y)
 
-    #@r.setter
-    #def r(self, value):
+    @r.setter
+    def r(self, value):
+        angle = self.t
+        self.x = cos(angle) * value
+        self.y = sit(angle) * value
 
     def __repr__(self):
         return self.__str__()
