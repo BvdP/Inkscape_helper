@@ -457,9 +457,7 @@ class Ellipse():
         p = theta_start % self.angle_step
 
         piece_length = self.distances[si + 1] - self.distances[si]
-
         start_dist = self.distances[si] + p * piece_length
-
         end_dist = dist + start_dist
 
         if end_dist > self.circumference:  # wrap around zero angle
