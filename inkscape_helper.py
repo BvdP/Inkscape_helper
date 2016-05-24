@@ -421,8 +421,7 @@ class Ellipse():
         self.distances = [0]
         theta = 0
         self.angle_step = 2 * pi / self.nr_points
-        #note: the render angle (ra) corresponds to the angle from the ellipse center (ca) according to:
-        # ca = atan(w/h * tan(ra))
+
         for i in range(self.nr_points):
             prev_dist = self.distances[-1]
             prev_coord = self.coordinate_at_theta(theta)
