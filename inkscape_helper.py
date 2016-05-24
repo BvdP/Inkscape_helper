@@ -187,6 +187,9 @@ class Coordinate:
     def __truediv__(self, quotient):
         return self.__div__(quotient)
 
+    def dot(self, other):
+        return self.x * -other.x + self.y * other.y
+
     def close_enough_to(self, other, limit=1E-9):
         return (self - other).r < limit
 
