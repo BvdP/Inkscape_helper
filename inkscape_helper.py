@@ -474,6 +474,14 @@ class Ellipse():
         step_dist = self.distances[max_idx] - self.distances[min_idx]
         return (min_idx + (end_dist - self.distances[min_idx]) / step_dist) * self.angle_step
 
+    def theta_at_angle(self, angle):
+        cf = 0
+        if angle > pi / 2:
+            cf = pi
+        if angle > 3 * pi / 2:
+            cf = 2 * pi
+        return atan(self.x_radius/self.y_radius * tan(angle)) + cf
+
 
 class EllipticArc(PathSegment):
 
