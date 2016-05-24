@@ -475,3 +475,56 @@ class Ellipse():
                 max_idx = half_idx
         step_dist = self.distances[max_idx] - self.distances[min_idx]
         return (min_idx + (end_dist - self.distances[min_idx]) / step_dist) * self.angle_step
+
+
+class EllipticArc(PathSegment):
+
+    ell_dict = {}
+
+    def __init__(self, start, end, rx, ry, axis_rot, pos_dir=True, large_arc=False):
+        if (end - start).r > max(rx, ry):
+            raise ValueError, 'Impossible to fit ellipse'
+
+        # calculate ellipse center
+        # the center is on two ellipses one with its center at the start point, the other at the end point
+        # for simplicity take the  one ellipse at the origin and the other with offset (tx, ty),
+        # find the center and translate back to the original offset at the end
+        end_o = end - start # offset end vector
+        end_o.t += axis_rot # take axis rotation into account
+        tx = end_o.x
+        ty = end_o.y
+        # some helper variables
+        cx = rx**2*ry*tx*ty**2
+        cy = rx*ty*(rx**2*ty**2 + ry**2*tx**2)
+        sx = rx*ty*sqrt(4*rx**4*ry**2*ty**2 - rx**4*ty**4 + 4*rx**2*ry**4*tx**2 - 2*rx**2*ry**2*tx**2*ty**2 - ry**4*tx**4) + ry**3*tx**3
+        sy = ry*tx*sqrt(-(rx**2*ty**2 + ry**2*tx**2)*(-4*rx**2*ry**2 + rx**2*ty**2 + ry**2*tx**2))
+        dx = 2*ry*(rx**2*ty**2 + ry**2*tx**2)
+        dy = 2*rx*(rx**2*ty**2 + ry**2*tx**2)
+        # intersection points
+        c1 = Coordinate((cx - sx) / dx, (cy + sy) / dy)
+        c2 = Coordinate((cx + sx) / dx, (cy - sy) / dy)
+
+        if end_o.dot(c1) < 0: # c1 is to the left of end_o
+            left = c1
+            right = c2
+        else:
+            left = c2
+            right = c1
+
+        if pos_dir != large_arc: #center should be on the left of end_o
+            center = left
+        else: #center should be on the right of end_o
+            center = right
+        # translate back to original offset
+        self.center = center + start
+
+
+        #re-use ellipses with same rx, ry
+        if (rx, ry) in ell_dict:
+            self.ellipse = ell_dict[(rx, ry)]
+        else:
+            self.ellipse = Ellipse(rx, ry)
+            ell_dict[(rx, ry)] = self.ellipse
+
+        self.start = start
+        self.end = end
