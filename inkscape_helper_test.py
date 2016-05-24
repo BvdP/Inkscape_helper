@@ -149,6 +149,14 @@ class TestEllipse(unittest.TestCase, Effect):
         self.assertTrue(pretty_close(self.circle.dist_from_theta(0, pi), 10 * pi))
         self.assertTrue(pretty_close(self.circle.theta_from_dist(0, 10 * pi), pi))
 
+    def test_theta_at_angle(self):
+        ell = Ellipse(20, 10)
+        print(ell.theta_at_angle(0))
+        self.assertEqual(ell.theta_at_angle(0), 0, 'theta at 0')
+        self.assertEqual(ell.theta_at_angle(pi / 2), pi / 2, 'theta at 90')
+        self.assertEqual(ell.theta_at_angle(pi), pi, 'theta at 180')
+        self.assertEqual(ell.theta_at_angle(3 * pi / 2), 3 * pi / 2, 'theta at 270')
+
 
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
 intersection_t = unittest.TestLoader().loadTestsFromTestCase(TestIntersection)
