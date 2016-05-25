@@ -127,11 +127,17 @@ class TestPathSegment(unittest.TestCase, Effect):
             self.assertTrue(points[1].close_enough_to(threeparts[1].coord), 'subdivide cubic bezier in three parts, 1st point')
             self.assertTrue(points[2].close_enough_to(threeparts[2].coord), 'subdivide cubic bezier in three parts, 2nd point')
 
+    def test_ellipsetic_arc(self):
+        C20_0 = Coordinate(10, 0)
+        C0_10 = Coordinate(0, 10)
+        arc = EllipticArc(C20_0, C0_10, 10, 10, 0)
+        self.assertEqual(arc.center, C00, 'ellipse center')
+
     def test_ellipse_subdivide(self):
         pass
 
-def pretty_close(a ,b):
-    return abs(a - b) < 1E-4  #TODO: current ellipse and bezier interpolation is always on the short side
+def pretty_close(a ,b, tolerance=1E-4):
+    return abs(a - b) < tolerance  #TODO: current ellipse and bezier interpolation is always on the short side
 
 class TestEllipse(unittest.TestCase, Effect):
     def setUp(self):
@@ -151,11 +157,13 @@ class TestEllipse(unittest.TestCase, Effect):
 
     def test_theta_at_angle(self):
         ell = Ellipse(20, 10)
-        print(ell.theta_at_angle(0))
+        # straight angles
         self.assertEqual(ell.theta_at_angle(0), 0, 'theta at 0')
         self.assertEqual(ell.theta_at_angle(pi / 2), pi / 2, 'theta at 90')
-        self.assertEqual(ell.theta_at_angle(pi), pi, 'theta at 180')
+        self.assertTrue(pretty_close(ell.theta_at_angle(pi), pi, 1e-15), 'theta at 180')
         self.assertEqual(ell.theta_at_angle(3 * pi / 2), 3 * pi / 2, 'theta at 270')
+        # 45 degrees
+        self.assertEqual(ell.theta_at_angle(pi / 4), atan(2), 'theta at 45')
 
 
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
