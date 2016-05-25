@@ -522,13 +522,19 @@ class EllipticArc(PathSegment):
         # translate back to original offset
         self.center = center + start
 
-
-        #re-use ellipses with same rx, ry
-        if (rx, ry) in ell_dict:
-            self.ellipse = ell_dict[(rx, ry)]
+        #re-use ellipses with same rx, ry to save some memory
+        if (rx, ry) in self.ell_dict:
+            self.ellipse = self.ell_dict[(rx, ry)]
         else:
             self.ellipse = Ellipse(rx, ry)
-            ell_dict[(rx, ry)] = self.ellipse
+            self.ell_dict[(rx, ry)] = self.ellipse
 
         self.start = start
         self.end = end
+        self.start_theta = self.ellipse.theta_at_angle((start - self.center).t)
+        self.end_theta = self.ellipse.theta_at_angle((end - self.center).t)
+
+    @property
+    def length(self):
+        return self.ellipse.dist_from_theta(self.start_theta, self.end_theta)
+
