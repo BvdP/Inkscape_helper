@@ -488,9 +488,6 @@ class EllipticArc(PathSegment):
     ell_dict = {}
 
     def __init__(self, start, end, rx, ry, axis_rot, pos_dir=True, large_arc=False):
-        if (end - start).r > max(rx, ry):
-            raise ValueError, 'Impossible to fit ellipse'
-
         # calculate ellipse center
         # the center is on two ellipses one with its center at the start point, the other at the end point
         # for simplicity take the  one ellipse at the origin and the other with offset (tx, ty),
@@ -499,16 +496,17 @@ class EllipticArc(PathSegment):
         end_o.t += axis_rot # take axis rotation into account
         tx = end_o.x
         ty = end_o.y
-        # some helper variables
-        cx = rx**2*ry*tx*ty**2
-        cy = rx*ty*(rx**2*ty**2 + ry**2*tx**2)
-        sx = rx*ty*sqrt(4*rx**4*ry**2*ty**2 - rx**4*ty**4 + 4*rx**2*ry**4*tx**2 - 2*rx**2*ry**2*tx**2*ty**2 - ry**4*tx**4) + ry**3*tx**3
-        sy = ry*tx*sqrt(-(rx**2*ty**2 + ry**2*tx**2)*(-4*rx**2*ry**2 + rx**2*ty**2 + ry**2*tx**2))
-        dx = 2*ry*(rx**2*ty**2 + ry**2*tx**2)
-        dy = 2*rx*(rx**2*ty**2 + ry**2*tx**2)
+
+        # some helper variables for the intersection points
+        ff = (rx**2*ty**2 + ry**2*tx**2)
+        cx = rx**2*ry*tx*ty**2 + ry**3*tx**3
+        cy = rx*ty*ff
+        sx = rx*ty*sqrt(4*rx**4*ry**2*ty**2 - rx**4*ty**4 + 4*rx**2*ry**4*tx**2 - 2*rx**2*ry**2*tx**2*ty**2 - ry**4*tx**4)
+        sy = ry*tx*sqrt(-ff*(-4*rx**2*ry**2 + rx**2*ty**2 + ry**2*tx**2))
+
         # intersection points
-        c1 = Coordinate((cx - sx) / dx, (cy + sy) / dy)
-        c2 = Coordinate((cx + sx) / dx, (cy - sy) / dy)
+        c1 = Coordinate((cx - sx) / (2*ry*ff), (cy + sy) / (2*rx*ff))
+        c2 = Coordinate((cx + sx) / (2*ry*ff), (cy - sy) / (2*rx*ff))
 
         if end_o.dot(c1) < 0: # c1 is to the left of end_o
             left = c1
