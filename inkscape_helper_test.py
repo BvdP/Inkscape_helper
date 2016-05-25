@@ -128,9 +128,9 @@ class TestPathSegment(unittest.TestCase, Effect):
             self.assertTrue(points[2].close_enough_to(threeparts[2].coord), 'subdivide cubic bezier in three parts, 2nd point')
 
     def test_ellipsetic_arc(self):
-        C20_0 = Coordinate(10, 0)
+        C20_0 = Coordinate(20, 0)
         C0_10 = Coordinate(0, 10)
-        arc = EllipticArc(C20_0, C0_10, 10, 10, 0)
+        arc = EllipticArc(C20_0, C0_10, 20, 10, 0)
         self.assertEqual(arc.center, C00, 'ellipse center')
 
     def test_ellipse_subdivide(self):
