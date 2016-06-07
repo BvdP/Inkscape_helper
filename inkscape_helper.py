@@ -437,6 +437,10 @@ class Ellipse():
         c = self.coordinate_at_theta(theta)
         return (self.x_radius*self.y_radius)/((cos(theta)**2*self.y_radius**2 + sin(theta)**2*self.x_radius**2)**(3/2))
 
+    def tangent(self, theta):
+        angle = self.theta_at_angle(theta)
+        return Coordinate(cos(angle), sin(angle))
+
     def coordinate_at_theta(self, theta):
         """Coordinate of the point at theta."""
         return Coordinate(self.x_radius * cos(theta), self.y_radius * sin(theta))
@@ -492,6 +496,8 @@ class EllipticArc(PathSegment):
     ell_dict = {}
 
     def __init__(self, start, end, rx, ry, axis_rot, pos_dir=True, large_arc=False):
+        self.rx = rx
+        self.ry = ry
         # calculate ellipse center
         # the center is on two ellipses one with its center at the start point, the other at the end point
         # for simplicity take the  one ellipse at the origin and the other with offset (tx, ty),
@@ -553,11 +559,27 @@ class EllipticArc(PathSegment):
         theta = self.t_to_theta(t)
         return self.ellipse.curvature(theta)
 
+    def tangent(self, t):
+        theta = self.t_to_theta(t)
+        return self.ellipse.tangent(theta)
+
     def t_at_length(self, length):
         """interpolated t where the curve is at the given length"""
         theta = self.ellipse.theta_from_dist(length, self.start_theta)
         return self.theta_to_t(theta)
 
+    def length_at_t(self, t):
+        return self.ellipse.dist_from_theta(self.start_theta, self.t_to_theta(t))
+
     def pathpoint_at_t(self, t):
         """pathpoint on the curve from t=0 to point at t."""
-        return PathPoint(t, Coord(), self.tangent(t), self.curvature(t), length_at_t(t))
+        return PathPoint(t, self.ellipse.coordinate_at_theta(self.t_to_theta(t)), self.tangent(t), self.curvature(t), self.length_at_t(t))
+
+    # identical to Bezier code
+    def subdivide(self, part_length, start_offset=0):
+        nr_parts = int((self.length - start_offset) // part_length)
+        k_o = start_offset / self.length
+        k2t = lambda k : k_o + k * part_length / self.length
+        points = [self.pathpoint_at_t(k2t(k)) for k in range(nr_parts + 1)]
+        return(points, self.length - points[-1].c_dist)
+
