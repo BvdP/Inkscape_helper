@@ -433,6 +433,10 @@ class Ellipse():
     def circumference(self):
         return self.distances[-1]
 
+    def curvature(self, theta):
+        c = self.coordinate_at_theta(theta)
+        return (self.x_radius*self.y_radius)/((cos(theta)**2*self.y_radius**2 + sin(theta)**2*self.x_radius**2)**(3/2))
+
     def coordinate_at_theta(self, theta):
         """Coordinate of the point at theta."""
         return Coordinate(self.x_radius * cos(theta), self.y_radius * sin(theta))
