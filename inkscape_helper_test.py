@@ -127,6 +127,8 @@ class TestPathSegment(unittest.TestCase, Effect):
             self.assertTrue(points[1].close_enough_to(threeparts[1].coord), 'subdivide cubic bezier in three parts, 1st point')
             self.assertTrue(points[2].close_enough_to(threeparts[2].coord), 'subdivide cubic bezier in three parts, 2nd point')
 
+
+class TestEllipticArc(unittest.TestCase, Effect):
     def test_elliptic_arc_center(self):
         C20_0 = Coordinate(20, 0)
         C0_10 = Coordinate(0, 10)
@@ -185,9 +187,10 @@ coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
 intersection_t = unittest.TestLoader().loadTestsFromTestCase(TestIntersection)
 path_t = unittest.TestLoader().loadTestsFromTestCase(TestPath)
 ellipse_t = unittest.TestLoader().loadTestsFromTestCase(TestEllipse)
+ell_arc_t = unittest.TestLoader().loadTestsFromTestCase(TestEllipticArc)
 segment_t = unittest.TestLoader().loadTestsFromTestCase(TestPathSegment)
 
 
-suite = unittest.TestSuite([coordinate_t, intersection_t, path_t, segment_t, ellipse_t])
+suite = unittest.TestSuite([coordinate_t, intersection_t, path_t, segment_t, ellipse_t, ell_arc_t])
 unittest.TextTestRunner(verbosity=2).run(suite)
 #    unittest.main()
