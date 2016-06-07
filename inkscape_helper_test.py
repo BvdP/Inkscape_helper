@@ -127,12 +127,13 @@ class TestPathSegment(unittest.TestCase, Effect):
             self.assertTrue(points[1].close_enough_to(threeparts[1].coord), 'subdivide cubic bezier in three parts, 1st point')
             self.assertTrue(points[2].close_enough_to(threeparts[2].coord), 'subdivide cubic bezier in three parts, 2nd point')
 
+C20_0 = Coordinate(20, 0)
+C0_10 = Coordinate(0, 10)
+C10_0 = Coordinate(10, 0)
+C20_10 = Coordinate(20, 10)
 
 class TestEllipticArc(unittest.TestCase, Effect):
     def test_elliptic_arc_center(self):
-        C20_0 = Coordinate(20, 0)
-        C0_10 = Coordinate(0, 10)
-        C20_10 = Coordinate(20, 10)
         arc = EllipticArc(C20_0, C0_10, 20, 10, 0)
         self.assertEqual(arc.center, C00, 'ellipse center')
         large_arc = EllipticArc(C20_0, C0_10, 20, 10, 0, large_arc = True)
@@ -140,8 +141,24 @@ class TestEllipticArc(unittest.TestCase, Effect):
         neg_arc = EllipticArc(C20_0, C0_10, 20, 10, 0, pos_dir = False)
         self.assertEqual(neg_arc.center, C20_10, 'ellipse center large arc')
 
+    def test_t_to_theta(self):
+        arc = EllipticArc(C10_0, C0_10, 10, 10, 2) # quarter circle, axis rotated by 2 rad
+        self.assertEqual(arc.t_to_theta(1), pi/2)
+        self.assertEqual(arc.t_to_theta(0.5), pi/4)
+
+    def test_theta_to_t(self):
+        arc = EllipticArc(C10_0, C0_10, 10, 10, 2)
+        self.assertEqual(arc.theta_to_t(pi/2), 1)
+        self.assertEqual(arc.theta_to_t(pi/4), 0.5)
+
     def test_elliptic_arc_length(self):
-        pass
+        arc = EllipticArc(C10_0, C0_10, 10, 10, 2)
+        self.assertTrue(pretty_close(arc.length, 10 * pi/2))
+
+    def test_pathpoint_at_t(self):
+        arc = EllipticArc(C10_0, Coordinate(-10, 0), 10, 20, 2)
+        self.assertTrue(arc.pathpoint_at_t(0.5).coord.close_enough_to(Coordinate(0, 20)), 'coordinate at 90')
+        self.assertEqual(arc.tangent(0.5).t, pi/2, 'tangent at 90')
 
     def test_elliptic_arc_subdivide(self):
         pass
