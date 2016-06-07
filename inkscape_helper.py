@@ -542,3 +542,22 @@ class EllipticArc(PathSegment):
     def length(self):
         return self.ellipse.dist_from_theta(self.start_theta, self.end_theta)
 
+    def t_to_theta(self, t):
+        """convert t (always between 0 and 1) to angle theta"""
+        return self.start_theta + (self.end_theta - self.start_theta) * t
+
+    def theta_to_t(self, theta):
+        return (theta - self.start_theta)/(self.end_theta - self.start_theta)
+
+    def curvature(self, t):
+        theta = self.t_to_theta(t)
+        return self.ellipse.curvature(theta)
+
+    def t_at_length(self, length):
+        """interpolated t where the curve is at the given length"""
+        theta = self.ellipse.theta_from_dist(length, self.start_theta)
+        return self.theta_to_t(theta)
+
+    def pathpoint_at_t(self, t):
+        """pathpoint on the curve from t=0 to point at t."""
+        return PathPoint(t, Coord(), self.tangent(t), self.curvature(t), length_at_t(t))
