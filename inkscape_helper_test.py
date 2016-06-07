@@ -1,7 +1,7 @@
+from __future__ import division
 import sys
 sys.path.append("C:\\Program Files\\Inkscape\\share\\extensions")
 sys.path.append("/usr/share/inkscape/extensions")
-
 import unittest
 from inkscape_helper import *
 
@@ -127,13 +127,21 @@ class TestPathSegment(unittest.TestCase, Effect):
             self.assertTrue(points[1].close_enough_to(threeparts[1].coord), 'subdivide cubic bezier in three parts, 1st point')
             self.assertTrue(points[2].close_enough_to(threeparts[2].coord), 'subdivide cubic bezier in three parts, 2nd point')
 
-    def test_ellipsetic_arc(self):
+    def test_elliptic_arc_center(self):
         C20_0 = Coordinate(20, 0)
         C0_10 = Coordinate(0, 10)
+        C20_10 = Coordinate(20, 10)
         arc = EllipticArc(C20_0, C0_10, 20, 10, 0)
         self.assertEqual(arc.center, C00, 'ellipse center')
+        large_arc = EllipticArc(C20_0, C0_10, 20, 10, 0, large_arc = True)
+        self.assertEqual(large_arc.center, C20_10, 'ellipse center large arc')
+        neg_arc = EllipticArc(C20_0, C0_10, 20, 10, 0, pos_dir = False)
+        self.assertEqual(neg_arc.center, C20_10, 'ellipse center large arc')
 
-    def test_ellipse_subdivide(self):
+    def test_elliptic_arc_length(self):
+        pass
+
+    def test_elliptic_arc_subdivide(self):
         pass
 
 def pretty_close(a ,b, tolerance=1E-4):
@@ -164,6 +172,13 @@ class TestEllipse(unittest.TestCase, Effect):
         self.assertEqual(ell.theta_at_angle(3 * pi / 2), 3 * pi / 2, 'theta at 270')
         # 45 degrees
         self.assertEqual(ell.theta_at_angle(pi / 4), atan(2), 'theta at 45')
+
+    def test_curvature(self):
+        ell = Ellipse(20, 10)
+        self.assertEqual(ell.curvature(0), 1/5, 'curvature at 0')
+        self.assertEqual(ell.curvature(pi / 2), 1/40, 'curvature at 90')
+        self.assertEqual(ell.curvature(pi), 1/5, 'curvature at 180')
+        self.assertEqual(ell.curvature(3 * pi / 2), 1/40, 'curvature at 270')
 
 
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
