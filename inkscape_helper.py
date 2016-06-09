@@ -541,6 +541,7 @@ class EllipticArc(PathSegment):
 
         self.start = start
         self.end = end
+        self.axis_rot = axis_rot
         self.start_theta = self.ellipse.theta_at_angle((start - self.center).t)
         self.end_theta = self.ellipse.theta_at_angle((end - self.center).t)
 
@@ -573,7 +574,9 @@ class EllipticArc(PathSegment):
 
     def pathpoint_at_t(self, t):
         """pathpoint on the curve from t=0 to point at t."""
-        return PathPoint(t, self.ellipse.coordinate_at_theta(self.t_to_theta(t)), self.tangent(t), self.curvature(t), self.length_at_t(t))
+        centered = self.ellipse.coordinate_at_theta(self.t_to_theta(t))
+        centered.t += self.axis_rot
+        return PathPoint(t, centered + self.center, self.tangent(t), self.curvature(t), self.length_at_t(t))
 
     # identical to Bezier code
     def subdivide(self, part_length, start_offset=0):
