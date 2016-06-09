@@ -196,7 +196,9 @@ class Coordinate:
 
 class Effect(inkex.Effect):
     """
-
+    Provides some extra features to inkex.Effect:
+    - Allows you to pass a list of options in stead of setting them one by one
+    - acces to unittouu() that is compatible between Inkscape versions 0.48 and 0.91
     """
     def __init__(self, options=None):
         inkex.Effect.__init__(self)
@@ -229,6 +231,9 @@ def _format_1st(command, is_absolute):
     return command.upper() if is_absolute else command.lower()
 
 class Path:
+    """
+    Generates SVG paths
+    """
     def __init__(self):
         self.nodes = []
 
@@ -508,6 +513,7 @@ class EllipticArc(PathSegment):
         ty = end_o.y
 
         # some helper variables for the intersection points
+        # used sympy to come up with the equations
         ff = (rx**2*ty**2 + ry**2*tx**2)
         cx = rx**2*ry*tx*ty**2 + ry**3*tx**3
         cy = rx*ty*ff
