@@ -141,7 +141,10 @@ class Coordinate:
     #polar coordinates
     @property
     def t(self):
-        return atan2(self.y, self.x)
+        angle = atan2(self.y, self.x)
+        if angle < 0:
+            angle += pi * 2
+        return angle
 
     @t.setter
     def t(self, value):
@@ -458,6 +461,7 @@ class Ellipse():
 
     def dist_from_theta(self, theta_start, theta_end):
         """Distance accross the surface from point at angle theta_end to point at angle theta_end. Measured in positive(CCW) sense."""
+        #print 'thetas ', theta_start, theta_end # TODO: figure out why are there so many with same start and end?
         i1 = int(theta_start / self.angle_step)
         p1 = theta_start % self.angle_step
         l1 = self.distances[i1 + 1] - self.distances[i1]
