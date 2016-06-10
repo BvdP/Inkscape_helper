@@ -163,6 +163,65 @@ class TestEllipticArc(unittest.TestCase, Effect):
     def test_elliptic_arc_subdivide(self):
         pass
 
+
+    def test_real_world(self):
+        #c1 = Coordinate(540.00001999999995, 566.64795000000004)
+        #c2 = Coordinate(368.57144, 672.36224000000004)
+        #c3 = Coordinate(197.14286999999999, 566.64795000000004)
+        #c4 = Coordinate(368.57144, 460.93365999999997)
+        #rx, ry = 171.42857000000001, 105.71429000000001
+        c1 = Coordinate(600, 500)
+        c2 = Coordinate(400, 600)
+        c3 = Coordinate(200, 500)
+        c4 = Coordinate(400, 400)
+        rx, ry = 200, 100
+        e1 = EllipticArc(c1, c2, rx, ry, 0, True, False)
+        e2 = EllipticArc(c2, c3, rx, ry, 0, True, False)
+        e3 = EllipticArc(c3, c4, rx, ry, 0, True, False)
+        e4 = EllipticArc(c4, c1, rx, ry, 0, True, False)
+
+        # start & end points
+        self.assertTrue(c1.close_enough_to(e1.pathpoint_at_t(0).coord), 'start e1')
+        self.assertTrue(c2.close_enough_to(e1.pathpoint_at_t(1).coord), 'end e1')
+        self.assertTrue(c2.close_enough_to(e2.pathpoint_at_t(0).coord), 'start e2')
+        self.assertTrue(c3.close_enough_to(e2.pathpoint_at_t(1).coord), 'end e2')
+        self.assertTrue(c3.close_enough_to(e3.pathpoint_at_t(0).coord), 'start e3')
+        self.assertTrue(c4.close_enough_to(e3.pathpoint_at_t(1).coord), 'end e3')
+        self.assertTrue(c4.close_enough_to(e4.pathpoint_at_t(0).coord), 'start e4')
+        self.assertTrue(c1.close_enough_to(e4.pathpoint_at_t(1).coord), 'end e4')
+
+        #centers
+        center = (c1 + c2 + c3 + c4) / 4
+        self.assertEqual(center, e1.center, 'center e1')
+        self.assertEqual(center, e2.center, 'center e2')
+        self.assertEqual(center, e3.center, 'center e3')
+        self.assertEqual(center, e4.center, 'center e4')
+
+        #angles
+        self.assertEqual(e1.start_theta, 0, 'e1 start theta')
+        self.assertEqual(e1.end_theta, pi / 2, 'e1 end theta')
+        self.assertEqual(e2.start_theta, pi / 2, 'e2 start theta')
+        self.assertTrue(pretty_close(e2.end_theta, pi) , 'e2 end theta')
+        self.assertTrue(pretty_close(e3.start_theta, pi) , 'e3 start theta')
+        #self.assertEqual(e3.start_theta, pi, 'e3 start theta')
+        self.assertEqual(e3.end_theta, 3 * pi / 2, 'e3 end theta')
+        self.assertEqual(e4.start_theta, 3 * pi / 2, 'e4 start theta')
+        self.assertEqual(e4.end_theta, 0, 'e4 end theta')
+
+        #halfway points
+        he1 = e1.pathpoint_at_t(0.5).coord
+        hl1 = (c1 + c2) / 2
+        self.assertTrue((c1.x > he1.x > hl1.x) and (c2.y > he1.y > hl1.y), 'h1')
+        he2 = e2.pathpoint_at_t(0.5).coord
+        hl2 = (c2 + c3) / 2
+        self.assertTrue((hl2.x > he2.x > c3.x) and (c2.y > he2.y > hl2.y), 'h2')
+        he3 = e3.pathpoint_at_t(0.5).coord
+        hl3 = (c3 + c4) / 2
+        self.assertTrue((hl3.x > he3.x > c3.x) and (hl3.y > he3.y > c4.y), 'h3')
+        he4 = e1.pathpoint_at_t(0.5).coord
+        hl4 = (c4 + c1) / 2
+        self.assertTrue((c1.x > he4.x > hl4.x) and (hl4.y > he4.y > c4.y), 'h4')
+
 def pretty_close(a ,b, tolerance=1E-4):
     return abs(a - b) < tolerance  #TODO: current ellipse and bezier interpolation is always on the short side
 
@@ -179,7 +238,8 @@ class TestEllipse(unittest.TestCase, Effect):
 
     def test_circle(self):
         self.assertTrue(pretty_close(self.circle.circumference, 20 * pi), 'circumference circle')
-        self.assertTrue(pretty_close(self.circle.dist_from_theta(0, pi), 10 * pi))
+        self.assertTrue(pretty_close(self.circle.dist_from_theta(0, pi), 10 * pi), 'arc length 0 -> pi')
+        self.assertTrue(pretty_close(self.circle.dist_from_theta(3 * pi / 2, 0), 5 * pi), 'arc length 3 * pi / 2 -> 0')
         self.assertTrue(pretty_close(self.circle.theta_from_dist(0, 10 * pi), pi))
 
     def test_theta_at_angle(self):
@@ -198,6 +258,12 @@ class TestEllipse(unittest.TestCase, Effect):
         self.assertEqual(ell.curvature(pi / 2), 1/40, 'curvature at 90')
         self.assertEqual(ell.curvature(pi), 1/5, 'curvature at 180')
         self.assertEqual(ell.curvature(3 * pi / 2), 1/40, 'curvature at 270')
+
+    def test_dist_from_theta(self):
+        pass
+
+    def test_theta_from_dist(self):
+        pass
 
 
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
