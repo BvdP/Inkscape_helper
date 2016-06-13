@@ -460,8 +460,11 @@ class Ellipse():
         return Coordinate(self.x_radius * cos(theta), self.y_radius * sin(theta))
 
     def dist_from_theta(self, theta_start, theta_end):
-        """Distance accross the surface from point at angle theta_end to point at angle theta_end. Measured in positive(CCW) sense."""
+        """Distance accross the surface from point at angle theta_end to point at angle theta_end. Measured in positive (CCW) sense."""
         #print 'thetas ', theta_start, theta_end # TODO: figure out why are there so many with same start and end?
+        # make sure thetas are between 0 and 2 * pi
+        theta_start %= 2 * pi
+        theta_end %= 2 * pi
         i1 = int(theta_start / self.angle_step)
         p1 = theta_start % self.angle_step
         l1 = self.distances[i1 + 1] - self.distances[i1]
@@ -558,6 +561,8 @@ class EllipticArc(PathSegment):
         self.start = start
         self.end = end
         self.axis_rot = axis_rot
+        self.pos_dir = pos_dir
+        self.large_arc = large_arc
         self.start_theta = self.ellipse.theta_at_angle((start - self.center).t)
         self.end_theta = self.ellipse.theta_at_angle((end - self.center).t)
 
@@ -567,7 +572,13 @@ class EllipticArc(PathSegment):
 
     def t_to_theta(self, t):
         """convert t (always between 0 and 1) to angle theta"""
-        return self.start_theta + (self.end_theta - self.start_theta) * t
+        start = self.start_theta
+        end = self.end_theta
+        if self.pos_dir and end < start:
+            end += 2 * pi
+        #if !self.pos_dir and start < end:
+        # TODO: handle negative direction arcs
+        return start + (end - start) * t
 
     def theta_to_t(self, theta):
         return (theta - self.start_theta)/(self.end_theta - self.start_theta)
