@@ -170,25 +170,39 @@ class TestEllipticArc(unittest.TestCase, Effect):
         #c3 = Coordinate(197.14286999999999, 566.64795000000004)
         #c4 = Coordinate(368.57144, 460.93365999999997)
         #rx, ry = 171.42857000000001, 105.71429000000001
-        c1 = Coordinate(600, 500)
-        c2 = Coordinate(400, 600)
-        c3 = Coordinate(200, 500)
-        c4 = Coordinate(400, 400)
+        right = Coordinate(600, 500)
+        top = Coordinate(400, 600)
+        left = Coordinate(200, 500)
+        bottom = Coordinate(400, 400)
         rx, ry = 200, 100
-        e1 = EllipticArc(c1, c2, rx, ry, 0, True, False)
-        e2 = EllipticArc(c2, c3, rx, ry, 0, True, False)
-        e3 = EllipticArc(c3, c4, rx, ry, 0, True, False)
-        e4 = EllipticArc(c4, c1, rx, ry, 0, True, False)
+        self.rw_tests(right, top, left, bottom, rx, ry, True)
+        self.rw_tests(right, bottom, left, top, rx, ry, False)
+
+
+    def rw_tests(self, c1, c2, c3, c4, rx, ry, dir):
+        e1 = EllipticArc(c1, c2, rx, ry, 0, dir, False)
+        e2 = EllipticArc(c2, c3, rx, ry, 0, dir, False)
+        e3 = EllipticArc(c3, c4, rx, ry, 0, dir, False)
+        e4 = EllipticArc(c4, c1, rx, ry, 0, dir, False)
 
         # start & end points
-        self.assertTrue(c1.close_enough_to(e1.pathpoint_at_t(0).coord), 'start e1')
-        self.assertTrue(c2.close_enough_to(e1.pathpoint_at_t(1).coord), 'end e1')
-        self.assertTrue(c2.close_enough_to(e2.pathpoint_at_t(0).coord), 'start e2')
-        self.assertTrue(c3.close_enough_to(e2.pathpoint_at_t(1).coord), 'end e2')
-        self.assertTrue(c3.close_enough_to(e3.pathpoint_at_t(0).coord), 'start e3')
-        self.assertTrue(c4.close_enough_to(e3.pathpoint_at_t(1).coord), 'end e3')
-        self.assertTrue(c4.close_enough_to(e4.pathpoint_at_t(0).coord), 'start e4')
-        self.assertTrue(c1.close_enough_to(e4.pathpoint_at_t(1).coord), 'end e4')
+        e1s = e1.pathpoint_at_t(0)
+        e1e = e1.pathpoint_at_t(1)
+        e2s = e2.pathpoint_at_t(0)
+        e2e = e2.pathpoint_at_t(1)
+        e3s = e3.pathpoint_at_t(0)
+        e3e = e3.pathpoint_at_t(1)
+        e4s = e4.pathpoint_at_t(0)
+        e4e = e4.pathpoint_at_t(1)
+        # coordinates
+        self.assertTrue(c1.close_enough_to(e1s.coord), 'start e1')
+        self.assertTrue(c2.close_enough_to(e1e.coord), 'end e1')
+        self.assertTrue(c2.close_enough_to(e2s.coord), 'start e2')
+        self.assertTrue(c3.close_enough_to(e2e.coord), 'end e2')
+        self.assertTrue(c3.close_enough_to(e3s.coord), 'start e3')
+        self.assertTrue(c4.close_enough_to(e3e.coord), 'end e3')
+        self.assertTrue(c4.close_enough_to(e4s.coord), 'start e4')
+        self.assertTrue(c1.close_enough_to(e4e.coord), 'end e4')
 
         #centers
         center = (c1 + c2 + c3 + c4) / 4
@@ -221,6 +235,12 @@ class TestEllipticArc(unittest.TestCase, Effect):
         he4 = e4.pathpoint_at_t(0.5).coord
         hl4 = (c4 + c1) / 2
         self.assertTrue((c1.x > he4.x > hl4.x) and (hl4.y > he4.y > c4.y), 'h4')
+
+        #tangents
+        self.assertEqual(e1e.tangent, e2s.tangent, 'tangents e1 e2')
+        self.assertEqual(e2e.tangent, e3s.tangent, 'tangents e2 e3')
+        self.assertEqual(e3e.tangent, e4s.tangent, 'tangents e3 e4')
+        self.assertTrue(e4e.tangent.close_enough_to(e1s.tangent), 'tangents e4 e1')
 
 def pretty_close(a ,b, tolerance=1E-4):
     return abs(a - b) < tolerance  #TODO: current ellipse and bezier interpolation is always on the short side
