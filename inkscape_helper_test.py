@@ -218,7 +218,7 @@ class TestEllipticArc(unittest.TestCase, Effect):
         he3 = e3.pathpoint_at_t(0.5).coord
         hl3 = (c3 + c4) / 2
         self.assertTrue((hl3.x > he3.x > c3.x) and (hl3.y > he3.y > c4.y), 'h3')
-        he4 = e1.pathpoint_at_t(0.5).coord
+        he4 = e4.pathpoint_at_t(0.5).coord
         hl4 = (c4 + c1) / 2
         self.assertTrue((c1.x > he4.x > hl4.x) and (hl4.y > he4.y > c4.y), 'h4')
 
