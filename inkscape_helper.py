@@ -130,7 +130,7 @@ def intersection (s1, e1, s2, e2, on_segments = True):
 def inner_product(a, b):
     return a.x * b.x + a.y * b.y
 
-class Coordinate:
+class Coordinate(object):
     """
     Basic (x, y) coordinate class (or should it be called vector?) which allows some simple operations.
     """
@@ -150,7 +150,7 @@ class Coordinate:
     def t(self, value):
         length = self.r
         self.x = cos(value) * length
-        self.y = sit(value) * length
+        self.y = sin(value) * length
 
 
     @property
