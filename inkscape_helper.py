@@ -520,6 +520,7 @@ class EllipticArc(PathSegment):
         # the center is on two ellipses one with its center at the start point, the other at the end point
         # for simplicity take the  one ellipse at the origin and the other with offset (tx, ty),
         # find the center and translate back to the original offset at the end
+        axis_rot *=  pi / 180 # convert to radians
         end_o = end - start # offset end vector
         end_o.t += axis_rot # take axis rotation into account
         tx = end_o.x
