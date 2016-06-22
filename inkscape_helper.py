@@ -2,6 +2,7 @@
 from __future__ import division
 import inkex
 import simplestyle
+import copy
 
 
 from math import *
@@ -521,8 +522,13 @@ class EllipticArc(PathSegment):
         # for simplicity take the  one ellipse at the origin and the other with offset (tx, ty),
         # find the center and translate back to the original offset at the end
         axis_rot *=  pi / 180 # convert to radians
-        end_o = end - start # offset end vector
-        end_o.t += axis_rot # take axis rotation into account
+        # start and end are mutable objects, copy to avoid modifying them
+        r_start = copy.copy(start)
+        r_end = copy.copy(end)
+        r_start.t += axis_rot
+        r_end.t += axis_rot
+        end_o = r_end - r_start # offset end vector
+
         tx = end_o.x
         ty = end_o.y
 
@@ -538,7 +544,7 @@ class EllipticArc(PathSegment):
         c1 = Coordinate((cx - sx) / (2*ry*ff), (cy + sy) / (2*rx*ff))
         c2 = Coordinate((cx + sx) / (2*ry*ff), (cy - sy) / (2*rx*ff))
 
-        if end_o.cross_norm(c1 - start) < 0: # c1 is to the left of end_o
+        if end_o.cross_norm(c1 - r_start) < 0: # c1 is to the left of end_o
             left = c1
             right = c2
         else:
@@ -550,7 +556,7 @@ class EllipticArc(PathSegment):
         else: #center should be on the right of end_o
             center = right
         # translate back to original offset
-        self.center = center + start
+        self.center = center + r_start
 
         #re-use ellipses with same rx, ry to save some memory
         if (rx, ry) in self.ell_dict:
@@ -559,13 +565,13 @@ class EllipticArc(PathSegment):
             self.ellipse = Ellipse(rx, ry)
             self.ell_dict[(rx, ry)] = self.ellipse
 
-        self.start = start
-        self.end = end
+        self.start = r_start
+        self.end = r_end
         self.axis_rot = axis_rot
         self.pos_dir = pos_dir
         self.large_arc = large_arc
-        self.start_theta = self.ellipse.theta_at_angle((start - self.center).t)
-        self.end_theta = self.ellipse.theta_at_angle((end - self.center).t)
+        self.start_theta = self.ellipse.theta_at_angle((r_start - self.center).t)
+        self.end_theta = self.ellipse.theta_at_angle((r_end - self.center).t)
 
     @property
     def length(self):
