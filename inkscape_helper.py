@@ -525,8 +525,8 @@ class EllipticArc(PathSegment):
         # start and end are mutable objects, copy to avoid modifying them
         r_start = copy.copy(start)
         r_end = copy.copy(end)
-        r_start.t += axis_rot
-        r_end.t += axis_rot
+        r_start.t -= axis_rot
+        r_end.t -= axis_rot
         end_o = r_end - r_start # offset end vector
 
         tx = end_o.x
