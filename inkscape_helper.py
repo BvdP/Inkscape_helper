@@ -182,6 +182,9 @@ class Coordinate(object):
     def __mul__(self, factor):
         return Coordinate(self.x * factor, self.y * factor)
 
+    def __neg__(self):
+        return Coordinate(-self.x, -self.y)
+
     def __rmul__(self, other):
         return self * other
 
