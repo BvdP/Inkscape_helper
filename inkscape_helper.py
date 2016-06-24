@@ -555,11 +555,11 @@ class EllipticArc(PathSegment):
             right = c1
 
         if pos_dir != large_arc: #center should be on the left of end_o
-            center = left
+            center_o = left
         else: #center should be on the right of end_o
-            center = right
+            center_o = right
         # translate back to original offset
-        self.center = center + r_start
+        self.center = center_o + start
 
         #re-use ellipses with same rx, ry to save some memory
         if (rx, ry) in self.ell_dict:
@@ -573,8 +573,8 @@ class EllipticArc(PathSegment):
         self.axis_rot = axis_rot
         self.pos_dir = pos_dir
         self.large_arc = large_arc
-        self.start_theta = self.ellipse.theta_at_angle((r_start - self.center).t)
-        self.end_theta = self.ellipse.theta_at_angle((r_end - self.center).t)
+        self.start_theta = self.ellipse.theta_at_angle((-center_o).t)
+        self.end_theta = self.ellipse.theta_at_angle((end_o - center_o).t)
 
     @property
     def length(self):
