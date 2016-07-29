@@ -285,6 +285,14 @@ class TestEllipse(unittest.TestCase, Effect):
     def test_theta_from_dist(self):
         pass
 
+class TestMatrix(unittest.TestCase):
+    mtx = Matrix([[1,2,3],[4,5,6],[7,8,9]])
+    def test_repr(self):
+        self.assertEqual(str(self.mtx), '[\n[1, 2, 3],\n[4, 5, 6],\n[7, 8, 9]\n]')
+
+    def test_minor(self):
+        self.assertEqual(str(self.mtx.minor(1, 1)), '[\n[1, 3],\n[7, 9]\n]')
+
 
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
 intersection_t = unittest.TestLoader().loadTestsFromTestCase(TestIntersection)
@@ -292,6 +300,7 @@ path_t = unittest.TestLoader().loadTestsFromTestCase(TestPath)
 ellipse_t = unittest.TestLoader().loadTestsFromTestCase(TestEllipse)
 ell_arc_t = unittest.TestLoader().loadTestsFromTestCase(TestEllipticArc)
 segment_t = unittest.TestLoader().loadTestsFromTestCase(TestPathSegment)
+matrix_t = unittest.TestLoader().loadTestsFromTestCase(TestMatrix)
 
 
 suite = unittest.TestSuite([coordinate_t, intersection_t, path_t, segment_t, ellipse_t, ell_arc_t])
