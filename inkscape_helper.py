@@ -236,8 +236,10 @@ class Matrix(object):
             return self[0][0]
         if self.rows == 2:
             return self[0][0] * self[1][1] - self[0][1] * self[1][0]
-        for i in self[0]:
-            return i * self.minor(0, i).det()
+        det = 0
+        for i in range(self.columns):
+            det += (-1)**i * self.array[0][i] * self.minor(0, i).det()
+        return det
 
     def __getitem__(self, index):
         return self.array[index]
