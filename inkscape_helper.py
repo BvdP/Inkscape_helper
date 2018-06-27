@@ -477,3 +477,73 @@ class Ellipse():
 
         stepDist = self.ellData[iMax].cDist - self.ellData[iMin].cDist
         return self.ellData[iMin].angle + self.angleStep * (absDist - self.ellData[iMin].cDist)/stepDist
+
+    def skewTransform(self, l, a2, b2):
+        x0 = a2**2
+        x1 = b2**2
+        x2 = l**2
+        x3 = x0*x2
+        x4 = x0 - x1 + x3
+        x5 = 2*a2*b2
+        x6 = x0 + x1 + x3
+        x7 = sqrt((-x5 + x6)*(x5 + x6))
+        x9 = 1/(x4 - x7)
+        x10 = x6 - x7
+        x11 = l*x10
+        x12 = b2**4
+        x13 = 4*x12
+        x14 = x10**2
+        x15 = 4*x1
+        x16 = sqrt(-x10*x15 + x13 + x14*x2 + x14)
+        x17 = 2*atan(x9*(x11 - x16))
+        x18 = sqrt(2)
+        x19 = sqrt(x10)
+        x20 = b2*x18*x19/2
+        x21 = x0/2
+        x22 = x1/2
+        x23 = x2*x21
+        x24 = x21 - x22 + x23
+        x25 = x7/2
+        x27 = 1/(x24 - x25)
+        x28 = x21 + x22 + x23
+        x29 = x28 - x25
+        x30 = l*x29
+        x31 = x14/4
+        x32 = 2*x1
+        x33 = sqrt(x12 + x2*x31 - x29*x32 + x31)
+        x34 = 2*atan(x27*(x30 - x33))
+        x35 = x20*sqrt(1/(-x1*cos(x34)**2 + x29))*sin(x34)
+        x36 = x18/2
+        x37 = -x19*x36
+        x39 = 2*atan(x9*(x11 + x16))
+        x40 = 2*atan(x27*(x30 + x33))
+        x41 = x20*sqrt(1/(-x1*cos(x40)**2 + x29))*sin(x40)
+        x42 = 1/(x4 + x7)
+        x43 = x6 + x7
+        x44 = l*x43
+        x45 = x43**2
+        x46 = sqrt(x13 - x15*x43 + x2*x45 + x45)
+        x47 = 2*atan(x42*(x44 - x46))
+        x48 = sqrt(x43)
+        x49 = b2*x18*x48/2
+        x50 = 1/(x24 + x25)
+        x51 = x25 + x28
+        x52 = l*x51
+        x53 = x45/4
+        x54 = sqrt(x12 + x2*x53 - x32*x51 + x53)
+        x55 = 2*atan(x50*(x52 - x54))
+        x56 = x49*sqrt(1/(-x1*cos(x55)**2 + x51))*sin(x55)
+        x57 = -x36*x48
+        x59 = 2*atan(x42*(x44 + x46))
+        x60 = 2*atan(x50*(x52 + x54))
+        x61 = x49*sqrt(1/(-x1*cos(x60)**2 + x51))*sin(x60)
+
+        #solutions (alpha, a1, b1)
+        (x17, -x35, x19*x36)
+        (x17, x35, x37)
+        (x39, -x41, x19*x36)
+        (x39, x41, x37)
+        (x47, -x56, x36*x48)
+        (x47, x56, x57)
+        (x59, -x61, x36*x48)
+        (x59, x61, x57)
