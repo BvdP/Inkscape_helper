@@ -117,13 +117,15 @@ class TestPathSegment(unittest.TestCase, Effect):
         self.assertEqual(line.subdivide(0.4, 0.05)[-1],sqrt(2) - 0.05 - 3 * 0.4, 'remaining length of subdivided line')
 
     def test_bezier_subdivide(self):
-        quadr = BezierCurve([C00, C11, C11 * 2])
-        twoparts, rest = quadr.subdivide(sqrt(2))
-        #print twoparts, rest
-        self.assertEqual(twoparts[1].coord, C11, 'subdivide quadratic bezier in two parts')
-        cubic = BezierCurve([C00, C11, C11 * 2, C11 * 3])
-        threeparts, rest = cubic.subdivide(sqrt(2))
-        self.assertEqual(threeparts[1].coord, C11, 'subdivide cubic bezier in three parts')
+        curve_points = [[C00, C01, C01 * 2, C01 * 3], [C00, C10, C10 * 2, C10 * 3], [C00, C11, C11 * 2, C11 * 3]]
+        for points in curve_points:
+            quadr = BezierCurve(points[:-1])
+            twoparts, rest = quadr.subdivide(points[1].r)
+            self.assertTrue(points[1].close_enough_to(twoparts[1].coord) , 'subdivide quadratic bezier in two parts')
+            cubic = BezierCurve(points)
+            threeparts, rest = cubic.subdivide(points[1].r)
+            self.assertTrue(points[1].close_enough_to(threeparts[1].coord), 'subdivide cubic bezier in three parts, 1st point')
+            self.assertTrue(points[2].close_enough_to(threeparts[2].coord), 'subdivide cubic bezier in three parts, 2nd point')
 
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
 intersection_t = unittest.TestLoader().loadTestsFromTestCase(TestIntersection)
