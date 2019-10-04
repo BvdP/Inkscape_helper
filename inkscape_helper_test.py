@@ -213,10 +213,10 @@ class TestEllipticArc(unittest.TestCase, Effect):
 
         #centers
         center = (c1 + c2 + c3 + c4) / 4
-        self.assertEqual(center, e1.center, 'center e1')
-        self.assertEqual(center, e2.center, 'center e2')
-        self.assertEqual(center, e3.center, 'center e3')
-        self.assertEqual(center, e4.center, 'center e4')
+        self.assertTrue(center.close_enough_to(e1.center), 'center e1')
+        self.assertTrue(center.close_enough_to(e2.center), 'center e2')
+        self.assertTrue(center.close_enough_to(e3.center), 'center e3')
+        self.assertTrue(center.close_enough_to(e4.center), 'center e4')
 
         #angles
         self.assertEqual(e1.start_theta, 0, 'e1 start theta')
