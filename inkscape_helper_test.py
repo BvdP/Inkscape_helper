@@ -142,21 +142,28 @@ class TestEllipticArc(unittest.TestCase, Effect):
         self.assertEqual(neg_arc.center, C20_10, 'ellipse center large arc')
 
     def test_t_to_theta(self):
-        arc = EllipticArc(C10_0, C0_10, 10, 10, 2) # quarter circle, axis rotated by 2 rad
+        #arc = EllipticArc(C10_0, C0_10, 10, 10, 45) # quarter circle, axis rotated by 45 degree
+        s = Coordinate (20, 0)
+        s.t += pi / 4
+        e = Coordinate(0, 10)
+        e.t += pi / 4
+        #arc = EllipticArc(C10_0, C0_10, 10, 10, 45) # quarter circle, axis rotated by 45 degree
+        arc = EllipticArc(s, e, 20, 10, 45) # quarter circle, axis rotated by 45 degree
+        self.assertEqual(arc.t_to_theta(0), 0)
         self.assertEqual(arc.t_to_theta(1), pi/2)
         self.assertEqual(arc.t_to_theta(0.5), pi/4)
 
     def test_theta_to_t(self):
-        arc = EllipticArc(C10_0, C0_10, 10, 10, 2)
+        arc = EllipticArc(C10_0, C0_10, 10, 10, 45)
         self.assertEqual(arc.theta_to_t(pi/2), 1)
         self.assertEqual(arc.theta_to_t(pi/4), 0.5)
 
     def test_elliptic_arc_length(self):
-        arc = EllipticArc(C10_0, C0_10, 10, 10, 2)
+        arc = EllipticArc(C10_0, C0_10, 10, 10, 45)
         self.assertTrue(pretty_close(arc.length, 10 * pi/2))
 
     def test_pathpoint_at_t(self):
-        arc = EllipticArc(C10_0, Coordinate(-10, 0), 10, 20, 2)
+        arc = EllipticArc(C10_0, Coordinate(-10, 0), 10, 20, 0)
         self.assertTrue(arc.pathpoint_at_t(0.5).coord.close_enough_to(Coordinate(0, 20)), 'coordinate at 90')
         self.assertEqual(arc.tangent(0.5).t, pi/2, 'tangent at 90')
 
