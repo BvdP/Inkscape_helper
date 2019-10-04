@@ -303,6 +303,6 @@ segment_t = unittest.TestLoader().loadTestsFromTestCase(TestPathSegment)
 matrix_t = unittest.TestLoader().loadTestsFromTestCase(TestMatrix)
 
 
-suite = unittest.TestSuite([coordinate_t, intersection_t, path_t, segment_t, ellipse_t, ell_arc_t])
+suite = unittest.TestSuite([coordinate_t, intersection_t, path_t, segment_t, ellipse_t, ell_arc_t, matrix_t])
 unittest.TextTestRunner(verbosity=2).run(suite)
 #    unittest.main()
