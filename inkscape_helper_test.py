@@ -135,7 +135,7 @@ C20_10 = Coordinate(20, 10)
 class TestEllipticArc(unittest.TestCase, Effect):
     def test_elliptic_arc_center(self):
         arc = EllipticArc(C20_0, C0_10, 20, 10, 0)
-        self.assertEqual(arc.center, C00, 'ellipse center')
+        self.assertTrue(arc.center.close_enough_to(C00), 'ellipse center')
         large_arc = EllipticArc(C20_0, C0_10, 20, 10, 0, large_arc = True)
         self.assertEqual(large_arc.center, C20_10, 'ellipse center large arc')
         neg_arc = EllipticArc(C20_0, C0_10, 20, 10, 0, pos_dir = False)
@@ -165,7 +165,7 @@ class TestEllipticArc(unittest.TestCase, Effect):
     def test_pathpoint_at_t(self):
         arc = EllipticArc(C10_0, Coordinate(-10, 0), 10, 20, 0)
         self.assertTrue(arc.pathpoint_at_t(0.5).coord.close_enough_to(Coordinate(0, 20)), 'coordinate at 90')
-        self.assertEqual(arc.tangent(0.5).t, pi/2, 'tangent at 90')
+        self.assertTrue(pretty_close(arc.tangent(0.5).t, pi/2), 'tangent at 90')
 
     def test_elliptic_arc_subdivide(self):
         pass
