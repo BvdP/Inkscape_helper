@@ -186,11 +186,11 @@ class TestEllipticArc(unittest.TestCase, Effect):
         self.rw_tests(right, bottom, left, top, rx, ry, False)
 
 
-    def rw_tests(self, c1, c2, c3, c4, rx, ry, dir):
-        e1 = EllipticArc(c1, c2, rx, ry, 0, dir, False)
-        e2 = EllipticArc(c2, c3, rx, ry, 0, dir, False)
-        e3 = EllipticArc(c3, c4, rx, ry, 0, dir, False)
-        e4 = EllipticArc(c4, c1, rx, ry, 0, dir, False)
+    def rw_tests(self, c1, c2, c3, c4, rx, ry, rot, pos_dir):
+        e1 = EllipticArc(c1, c2, rx, ry, rot, pos_dir, False)
+        e2 = EllipticArc(c2, c3, rx, ry, rot, pos_dir, False)
+        e3 = EllipticArc(c3, c4, rx, ry, rot, pos_dir, False)
+        e4 = EllipticArc(c4, c1, rx, ry, rot, pos_dir, False)
 
         # start & end points
         e1s = e1.pathpoint_at_t(0)
