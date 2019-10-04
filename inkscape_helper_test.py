@@ -300,6 +300,10 @@ class TestMatrix(unittest.TestCase):
     def test_minor(self):
         self.assertEqual(str(self.mtx.minor(1, 1)), '[\n[1, 3],\n[7, 9]\n]')
 
+    def test_determinant(self):
+        self.assertEqual(self.mtx.det(), 0)
+        self.assertEqual(self.mtx.minor(2, 2).det(), -3)
+
 
 coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
 intersection_t = unittest.TestLoader().loadTestsFromTestCase(TestIntersection)
