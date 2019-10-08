@@ -153,10 +153,16 @@ class TestEllipticArc(unittest.TestCase, Effect):
         self.assertEqual(arc.t_to_theta(1), pi/2)
         self.assertEqual(arc.t_to_theta(0.5), pi/4)
 
-    def test_theta_to_t(self):
-        arc = EllipticArc(C10_0, C0_10, 10, 10, 45)
+    def test_theta_to_t_not_rot(self):
+        arc = EllipticArc(C10_0, C0_10, 10, 10, 0) #quarter circle, not rotated
         self.assertEqual(arc.theta_to_t(pi/2), 1)
         self.assertEqual(arc.theta_to_t(pi/4), 0.5)
+
+    def test_theta_to_t_rot(self):
+        # NOTE: we're mixing degrees and radians here, not great
+        arc = EllipticArc(C10_0, C0_10, 10, 10, 45) #quarter circle, rotated 45 degrees
+        #self.assertEqual(arc.theta_to_t(2*pi/4), 1)
+        self.assertEqual(arc.theta_to_t(pi/2), 0.5)
 
     def test_elliptic_arc_length(self):
         arc = EllipticArc(C10_0, C0_10, 10, 10, 45)
