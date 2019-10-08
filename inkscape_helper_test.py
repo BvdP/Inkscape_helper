@@ -178,18 +178,32 @@ class TestEllipticArc(unittest.TestCase, Effect):
 
 
     def test_real_world(self):
-        #c1 = Coordinate(540.00001999999995, 566.64795000000004)
-        #c2 = Coordinate(368.57144, 672.36224000000004)
-        #c3 = Coordinate(197.14286999999999, 566.64795000000004)
-        #c4 = Coordinate(368.57144, 460.93365999999997)
-        #rx, ry = 171.42857000000001, 105.71429000000001
-        right = Coordinate(600, 500)
-        top = Coordinate(400, 600)
-        left = Coordinate(200, 500)
-        bottom = Coordinate(400, 400)
-        rx, ry = 200, 100
-        self.rw_tests(right, top, left, bottom, rx, ry, True)
-        self.rw_tests(right, bottom, left, top, rx, ry, False)
+        rx, ry = 136.87567000000001, 46.467018000000003
+        rot_deg = 11.8225
+        c1 = Coordinate(400.32499000000001, 546.23693000000003)
+        c2 = Coordinate(256.83267000000001, 563.67507999999998)
+        c3 = Coordinate(132.38073, 490.15062999999998)
+        c4 = Coordinate(275.87304, 472.71246000000002)
+
+        center = Coordinate(300, 400)
+        x = 200
+        y = 100
+        rot_deg = 3
+        rot_rad = rot_deg * pi / 180
+        right = Coordinate(x, 0)
+        top = Coordinate(0, y)
+        left = Coordinate(-x, 0)
+        bottom = Coordinate(0, -y)
+        right.t += rot_rad
+        top.t += rot_rad
+        left.t += rot_rad
+        bottom.t += rot_rad
+
+
+        print 'pos dir'
+        self.rw_tests(right, top, left, bottom, x, y, rot_deg, True)
+        print 'neg dir'
+        self.rw_tests(right, bottom, left, top, x, y, rot_deg, False)
 
 
     def rw_tests(self, c1, c2, c3, c4, rx, ry, rot, pos_dir):
