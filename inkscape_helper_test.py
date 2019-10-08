@@ -225,15 +225,20 @@ class TestEllipticArc(unittest.TestCase, Effect):
         self.assertTrue(center.close_enough_to(e4.center), 'center e4')
 
         #angles
-        self.assertEqual(e1.start_theta, 0, 'e1 start theta')
-        self.assertEqual(e1.end_theta, pi / 2, 'e1 end theta')
-        self.assertEqual(e2.start_theta, pi / 2, 'e2 start theta')
-        self.assertTrue(pretty_close(e2.end_theta, pi) , 'e2 end theta')
-        self.assertTrue(pretty_close(e3.start_theta, pi) , 'e3 start theta')
-        #self.assertEqual(e3.start_theta, pi, 'e3 start theta')
-        self.assertEqual(e3.end_theta, 3 * pi / 2, 'e3 end theta')
-        self.assertEqual(e4.start_theta, 3 * pi / 2, 'e4 start theta')
-        self.assertEqual(e4.end_theta, 0, 'e4 end theta')
+        angle = 0
+        increase = (pi / 2) if pos_dir else (-pi / 2)
+        self.assertEqual(e1.start_theta, angle, 'e1 start theta')
+        angle = (angle + increase) % (2 * pi)
+        self.assertEqual(e1.end_theta, angle, 'e1 end theta')
+        self.assertEqual(e2.start_theta, angle, 'e2 start theta')
+        angle = (angle + increase) % (2 * pi)
+        self.assertTrue(pretty_close(e2.end_theta, angle) , 'e2 end theta')
+        self.assertTrue(pretty_close(e3.start_theta, angle) , 'e3 start theta')
+        angle = (angle + increase) % (2 * pi)
+        self.assertEqual(e3.end_theta, angle, 'e3 end theta')
+        self.assertEqual(e4.start_theta, angle, 'e4 start theta')
+        angle = (angle + increase) % (2 * pi)
+        self.assertEqual(e4.end_theta, angle, 'e4 end theta')
 
         #halfway points
         he1 = e1.pathpoint_at_t(0.5).coord
