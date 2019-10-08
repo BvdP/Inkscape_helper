@@ -388,7 +388,7 @@ class Line(PathSegment):
         return self.pp(t)
 
     def t_at_length(self, length):
-        return length / self.length()
+        return length / self.length
 
 
 class BezierCurve(PathSegment):
