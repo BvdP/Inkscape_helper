@@ -616,8 +616,8 @@ class EllipticArc(PathSegment):
             self.ellipse = Ellipse(rx, ry)
             self.ell_dict[(rx, ry)] = self.ellipse
 
-        self.start = r_start
-        self.end = r_end
+        self.start = start
+        self.end = end
         self.axis_rot = axis_rot
         self.pos_dir = pos_dir
         self.large_arc = large_arc
