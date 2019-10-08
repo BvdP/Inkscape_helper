@@ -323,7 +323,7 @@ class Path:
                     'd': ' '.join(self.nodes)}
         inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), attribs)
 
-    def curve(parent, segments, style, closed=True):
+    def curve(self, parent, segments, style, closed=True):
         #pathStr = 'M '+ segments[0]
         pathStr = ' '.join(segments)
         if closed:
