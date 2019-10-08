@@ -162,7 +162,7 @@ class Coordinate(object):
     def r(self, value):
         angle = self.t
         self.x = cos(angle) * value
-        self.y = sit(angle) * value
+        self.y = sin(angle) * value
 
     def __repr__(self):
         return self.__str__()
@@ -624,7 +624,7 @@ class EllipticArc(PathSegment):
         self.start_theta = self.ellipse.theta_at_angle((-center_o).t)
         self.end_theta = self.ellipse.theta_at_angle((end_o - center_o).t)
 
-        # translate cent back to original offset
+        # translate center back to original offset
         center_o.t += axis_rot
         self.center = center_o + start
 
