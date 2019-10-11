@@ -4,6 +4,7 @@ sys.path.append("C:\\Program Files\\Inkscape\\share\\extensions")
 sys.path.append("/usr/share/inkscape/extensions")
 import unittest
 from inkscape_helper.inkscape_helper import *
+from inkscape_helper.Coordinate import Coordinate
 
 C00 = Coordinate(0, 0)
 C10 = Coordinate(1, 0)
@@ -34,39 +35,6 @@ class TestIntersection(unittest.TestCase):
         self.assertEqual(intersection(C00, C11, C10, C01), Coordinate(.5, .5))
 
 
-class TestCoordinate(unittest.TestCase):
-    def setUp(self):
-        self.CX = Coordinate(1, 0)
-        self.CY = Coordinate(0, 1)
-
-    def test_eq(self):
-        self.assertEqual(Coordinate(1, 2), Coordinate(1, 2))
-
-    def test_add(self):
-        sum = self.CX + self.CY
-        self.assertEqual(sum, C11)
-
-    def test_sub(self):
-        diff = C11 - self.CX
-        self.assertEqual(diff, self.CY)
-
-    def test_mul(self):
-        prod = C11 * 2
-        self.assertEqual(prod, Coordinate(2, 2))
-
-    def test_rmul(self):
-        prod = 2 * C11
-        self.assertEqual(prod, Coordinate(2, 2))
-
-    def test_div(self):
-        quot = C11 / 2
-        self.assertEqual(quot, Coordinate(.5, .5))
-
-    def test_r(self):
-        self. assertEqual(C11.r, sqrt(2))
-
-    def test_t(self):
-        self.assertEqual(C11.t, pi/4)
 
 
 class TestPath(unittest.TestCase, Effect):
@@ -330,7 +298,7 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(self.mtx.minor(2, 2).det(), -3)
 
 
-coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
+#coordinate_t = unittest.TestLoader().loadTestsFromTestCase(TestCoordinate)
 intersection_t = unittest.TestLoader().loadTestsFromTestCase(TestIntersection)
 path_t = unittest.TestLoader().loadTestsFromTestCase(TestPath)
 ellipse_t = unittest.TestLoader().loadTestsFromTestCase(TestEllipse)
@@ -339,6 +307,6 @@ segment_t = unittest.TestLoader().loadTestsFromTestCase(TestPathSegment)
 matrix_t = unittest.TestLoader().loadTestsFromTestCase(TestMatrix)
 
 
-suite = unittest.TestSuite([coordinate_t, intersection_t, path_t, segment_t, ellipse_t, ell_arc_t, matrix_t])
+suite = unittest.TestSuite([intersection_t, path_t, segment_t, ellipse_t, ell_arc_t, matrix_t])
 unittest.TextTestRunner(verbosity=2).run(suite)
 #    unittest.main()
