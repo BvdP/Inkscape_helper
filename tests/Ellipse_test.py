@@ -1,12 +1,18 @@
-from inkscape_helper.Effect.Effect import *
+#from inkscape_helper.Effect.Effect import Effect
 from inkscape_helper.Ellipse import Ellipse
 from inkscape_helper.Coordinate import Coordinate
 
 from math import pi, atan
+from __future__ import division
 
 import unittest
 
-class TestEllipse(unittest.TestCase, Effect):
+# Helper function to avoid rounding errors
+def pretty_close(a ,b, tolerance=1E-4):
+    return abs(a - b) < tolerance  #TODO: current ellipse and bezier interpolation is always on the short side
+
+
+class TestEllipse(unittest.TestCase):
     def setUp(self):
         self.circle = Ellipse(10, 10)
 
