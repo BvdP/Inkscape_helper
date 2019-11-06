@@ -1,9 +1,9 @@
+from __future__ import division
 #from inkscape_helper.Effect.Effect import Effect
 from inkscape_helper.Ellipse import Ellipse
 from inkscape_helper.Coordinate import Coordinate
 
 from math import pi, atan
-from __future__ import division
 
 import unittest
 

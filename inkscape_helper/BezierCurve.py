@@ -1,4 +1,7 @@
-from PathSegment import PathSegment
+from __future__ import division
+
+from PathSegment import *
+from math import hypot
 
 class BezierCurve(PathSegment):
     nr_points = 10

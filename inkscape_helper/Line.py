@@ -1,4 +1,4 @@
-from PathSegment import PathSegment
+from PathSegment import *
 
 class Line(PathSegment):
 

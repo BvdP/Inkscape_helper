@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 PathPoint = namedtuple('PathPoint', 't coord tangent curvature c_dist')
 
 class PathSegment():
