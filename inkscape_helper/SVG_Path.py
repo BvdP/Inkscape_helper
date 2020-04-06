@@ -2,7 +2,7 @@ def _format_1st(command, is_absolute):
     """Small helper function for the Path class"""
     return command.upper() if is_absolute else command.lower()
 
-class Path:
+class SVG_Path:
     """
     Generates SVG paths
     """

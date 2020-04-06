@@ -1,7 +1,7 @@
 import unittest
 
 from inkscape_helper.Effect import Effect
-from inkscape_helper.Path import Path
+from inkscape_helper.SVG_Path import SVG_Path
 from inkscape_helper.Coordinate import Coordinate
 
 C00 = Coordinate(0, 0)
@@ -9,7 +9,7 @@ C10 = Coordinate(1, 0)
 C01 = Coordinate(0, 1)
 C11 = Coordinate(1, 1)
 
-class TestPath(unittest.TestCase, Effect):
+class TestPath(unittest.TestCase, SVG_Path):
     # def __init__(self, *args, **kwargs):
         # print args, kwargs
         # unittest.TestCase.__init__(*args, **kwargs)
