@@ -4,7 +4,11 @@ These are helper functions for some Inkscape plugins.
 
 # Running tests
 
-`python -m unittest tests.inkscape_helper_test`
+Run all tests like so:
+`python -m unittest discover tests`
+
+Test individual modules like so:
+`python -m unittest -v tests.test_<name>
 
 # Deploying
 
