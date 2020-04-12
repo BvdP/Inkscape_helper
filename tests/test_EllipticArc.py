@@ -1,12 +1,8 @@
 import unittest
 
-import sys
-sys.path.append("C:\\Program Files\\Inkscape\\share\\extensions")
-sys.path.append("/usr/share/inkscape/extensions")
-
-from Inkscape_helper.Effect import Effect
-from Inkscape_helper.EllipticArc import EllipticArc
-from Inkscape_helper.Coordinate import Coordinate
+from inkscape_helper.Effect import Effect
+from inkscape_helper.EllipticArc import EllipticArc
+from inkscape_helper.Coordinate import Coordinate
 
 from math import pi
 
