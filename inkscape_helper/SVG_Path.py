@@ -1,6 +1,15 @@
+import inkex
+import simplestyle
+
 def _format_1st(command, is_absolute):
     """Small helper function for the Path class"""
     return command.upper() if is_absolute else command.lower()
+
+default_style = simplestyle.formatStyle(
+    {'stroke': '#000000',
+    'stroke-width': '1',
+    'fill': 'none'
+    })
 
 class SVG_Path:
     """
@@ -27,13 +36,12 @@ class SVG_Path:
     def close(self):
         self.nodes.append('z')
 
-    def path(self, parent, style):
+    def path(self, parent, style=default_style):
         attribs = {'style': style,
                     'd': ' '.join(self.nodes)}
         inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), attribs)
 
     def curve(self, parent, segments, style, closed=True):
-        #pathStr = 'M '+ segments[0]
         pathStr = ' '.join(segments)
         if closed:
             pathStr += ' z'
