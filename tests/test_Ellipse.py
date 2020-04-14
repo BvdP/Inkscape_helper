@@ -7,10 +7,6 @@ from math import pi, atan
 
 import unittest
 
-# Helper function to avoid rounding errors
-def pretty_close(a ,b, tolerance=1E-4):
-    return abs(a - b) < tolerance  #TODO: current ellipse and bezier interpolation is always on the short side
-
 
 class TestEllipse(unittest.TestCase):
     def setUp(self):
@@ -24,17 +20,17 @@ class TestEllipse(unittest.TestCase):
         self.assertTrue(Coordinate(0, -8).close_enough_to(ell.coordinate_at_theta(3*pi/2)), 'coordinate at angle 3*pi/2')
 
     def test_circle(self):
-        self.assertTrue(pretty_close(self.circle.circumference, 20 * pi), 'circumference circle')
-        self.assertTrue(pretty_close(self.circle.dist_from_theta(0, pi), 10 * pi), 'arc length 0 -> pi')
-        self.assertTrue(pretty_close(self.circle.dist_from_theta(3 * pi / 2, 0), 5 * pi), 'arc length 3 * pi / 2 -> 0')
-        self.assertTrue(pretty_close(self.circle.theta_from_dist(0, 10 * pi), pi))
+        self.assertAlmostEqual(self.circle.circumference, 20 * pi, 3, 'circumference circle')
+        self.assertAlmostEqual(self.circle.dist_from_theta(0, pi), 10 * pi, 3,'arc length 0 -> pi')
+        self.assertAlmostEqual(self.circle.dist_from_theta(3 * pi / 2, 0), 5 * pi, 3, 'arc length 3 * pi / 2 -> 0')
+        self.assertAlmostEqual(self.circle.theta_from_dist(0, 10 * pi), pi, 5)
 
     def test_theta_at_angle(self):
         ell = Ellipse(20, 10)
         # straight angles
         self.assertEqual(ell.theta_at_angle(0), 0, 'theta at 0')
         self.assertEqual(ell.theta_at_angle(pi / 2), pi / 2, 'theta at 90')
-        self.assertTrue(pretty_close(ell.theta_at_angle(pi), pi, 1e-15), 'theta at 180')
+        self.assertAlmostEqual(ell.theta_at_angle(pi), pi, msg='theta at 180')
         self.assertEqual(ell.theta_at_angle(3 * pi / 2), 3 * pi / 2, 'theta at 270')
         # 45 degrees
         self.assertEqual(ell.theta_at_angle(pi / 4), atan(2), 'theta at 45')

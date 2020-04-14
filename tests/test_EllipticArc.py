@@ -6,6 +6,7 @@ from inkscape_helper.Coordinate import Coordinate
 
 from math import pi
 
+C00 = Coordinate(0, 0)
 C20_0 = Coordinate(20, 0)
 C0_10 = Coordinate(0, 10)
 C10_0 = Coordinate(10, 0)
@@ -40,17 +41,16 @@ class TestEllipticArc(unittest.TestCase, Effect):
     def test_theta_to_t_rot(self):
         # NOTE: we're mixing degrees and radians here, not great
         arc = EllipticArc(C10_0, C0_10, 10, 10, 45) #quarter circle, rotated 45 degrees
-        #self.assertEqual(arc.theta_to_t(2*pi/4), 1)
         self.assertEqual(arc.theta_to_t(pi/2), 0.5)
 
     def test_elliptic_arc_length(self):
         arc = EllipticArc(C10_0, C0_10, 10, 10, 45)
-        self.assertTrue(pretty_close(arc.length, 10 * pi/2))
+        self.assertAlmostEqual(arc.length, 10 * pi / 2, 4)
 
     def test_pathpoint_at_t(self):
         arc = EllipticArc(C10_0, Coordinate(-10, 0), 10, 20, 0)
         self.assertTrue(arc.pathpoint_at_t(0.5).coord.close_enough_to(Coordinate(0, 20)), 'coordinate at 90')
-        self.assertTrue(pretty_close(arc.tangent(0.5).t, pi/2), 'tangent at 90')
+        self.assertAlmostEqual(arc.tangent(0.5).t, pi/2)
 
     def test_elliptic_arc_subdivide(self):
         pass
@@ -82,7 +82,7 @@ class TestEllipticArc(unittest.TestCase, Effect):
         print 'pos dir'
         self.rw_tests(right, top, left, bottom, x, y, rot_deg, True)
         print 'neg dir'
-        self.rw_tests(right, bottom, left, top, x, y, rot_deg, False)
+        self.rw_tests(right, bottom, left, top, x, y, rot_deg, False) #this goes wrong
 
 
     def rw_tests(self, c1, c2, c3, c4, rx, ry, rot, pos_dir):
@@ -125,8 +125,8 @@ class TestEllipticArc(unittest.TestCase, Effect):
         self.assertEqual(e1.end_theta, angle, 'e1 end theta')
         self.assertEqual(e2.start_theta, angle, 'e2 start theta')
         angle = (angle + increase) % (2 * pi)
-        self.assertTrue(pretty_close(e2.end_theta, angle) , 'e2 end theta')
-        self.assertTrue(pretty_close(e3.start_theta, angle) , 'e3 start theta')
+        self.assertAlmostEqual(e2.end_theta, angle)
+        self.assertAlmostEqual(e3.start_theta, angle)
         angle = (angle + increase) % (2 * pi)
         self.assertEqual(e3.end_theta, angle, 'e3 end theta')
         self.assertEqual(e4.start_theta, angle, 'e4 start theta')
