@@ -11,7 +11,7 @@ default_style = simplestyle.formatStyle(
     'fill': 'none'
     })
 
-class SVG_Path:
+class SVG_Path(object):
     """
     Generates SVG paths
     """

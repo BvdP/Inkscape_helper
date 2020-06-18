@@ -27,7 +27,7 @@ class BezierCurve(PathSegment):
             pt = self.B(t)
             self.distances.append(self.distances[-1] + hypot(prev_pt.x - pt.x, prev_pt.y - pt.y))
             prev_pt = pt
-        self.length = self.distances[-1]
+        self._length = self.distances[-1]
 
     def curvature(self, t):
         n = self.Bd(t).x * self.Bdd(t).y - self.Bd(t).y * self.Bdd(t).x
@@ -50,7 +50,7 @@ class BezierCurve(PathSegment):
 
     @property
     def length(self):
-        return self.length
+        return self._length
 
     def subdivide(self, part_length, start_offset=0):
         nr_parts = int((self.length - start_offset) // part_length)

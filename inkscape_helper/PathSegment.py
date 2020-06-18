@@ -2,7 +2,7 @@ from collections import namedtuple
 
 PathPoint = namedtuple('PathPoint', 't coord tangent curvature c_dist')
 
-class PathSegment():
+class PathSegment(object):
 
     def __init__(self):
         raise NotImplementedError

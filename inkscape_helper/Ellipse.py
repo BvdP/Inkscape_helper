@@ -2,7 +2,7 @@ from __future__ import division
 from math import *
 from Coordinate import Coordinate
 
-class Ellipse():
+class Ellipse(object):
     """Used as a base class for EllipticArc."""
     nr_points = 1024 #used for piecewise linear circumference calculation (ellipse circumference is tricky to calculate)
     # approximate circumfere: c = pi * (3 * (a + b) - sqrt(10 * a * b + 3 * (a ** 2 + b ** 2)))
