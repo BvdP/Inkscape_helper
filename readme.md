@@ -7,7 +7,7 @@ This code uses `unittest` and `mock` which can either be installed using `pip` o
 # Running tests
 
 Run all tests like so:
-`python -m unittest discover tests`
+`python -m unittest discover`
 
 Test individual modules like so:
 `python -m unittest -v tests.test_<name>`
