@@ -86,7 +86,9 @@ class EllipticArc(PathSegment):
         return start + (end - start) * t
 
     def theta_to_t(self, theta):
-        return (theta - self.start_theta)/(self.end_theta - self.start_theta)
+        full_arc_size = (self.end_theta - self.start_theta + 2 * pi) % (2 * pi)
+        theta_arc_size = (theta - self.start_theta + 2 * pi) % (2 * pi)
+        return theta_arc_size / full_arc_size
 
     def curvature(self, t):
         theta = self.t_to_theta(t)
