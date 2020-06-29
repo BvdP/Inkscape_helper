@@ -12,6 +12,11 @@ C0_10 = Coordinate(0, 10)
 C10_0 = Coordinate(10, 0)
 C20_10 = Coordinate(20, 10)
 
+def between(mid, end1, end2):
+    small = min(end1, end2)
+    large = max(end1, end2)
+    return small < mid < large
+
 class TestEllipticArc(unittest.TestCase, Effect):
     def test_elliptic_arc_center(self):
         arc = EllipticArc(C20_0, C0_10, 20, 10, 0)
@@ -78,12 +83,8 @@ class TestEllipticArc(unittest.TestCase, Effect):
         left.t += rot_rad
         bottom.t += rot_rad
 
-
-        print 'pos dir'
         self.rw_tests(right, top, left, bottom, x, y, rot_deg, True)
-        print 'neg dir'
-        self.rw_tests(right, bottom, left, top, x, y, rot_deg, False) #this goes wrong
-
+        self.rw_tests(right, bottom, left, top, x, y, rot_deg, False)
 
     def rw_tests(self, c1, c2, c3, c4, rx, ry, rot, pos_dir):
         e1 = EllipticArc(c1, c2, rx, ry, rot, pos_dir, False)
@@ -136,16 +137,20 @@ class TestEllipticArc(unittest.TestCase, Effect):
         #halfway points
         he1 = e1.pathpoint_at_t(0.5).coord
         hl1 = (c1 + c2) / 2
-        self.assertTrue((c1.x > he1.x > hl1.x) and (c2.y > he1.y > hl1.y), 'h1')
+        self.assertTrue(between(he1.x, c1.x, hl1.x))
+        self.assertTrue(between(he1.y, c2.y, hl1.y))
         he2 = e2.pathpoint_at_t(0.5).coord
         hl2 = (c2 + c3) / 2
-        self.assertTrue((hl2.x > he2.x > c3.x) and (c2.y > he2.y > hl2.y), 'h2')
+        self.assertTrue(between(he2.x, c3.x, hl2.x))
+        self.assertTrue(between(he2.y, c2.y, hl2.y))
         he3 = e3.pathpoint_at_t(0.5).coord
         hl3 = (c3 + c4) / 2
-        self.assertTrue((hl3.x > he3.x > c3.x) and (hl3.y > he3.y > c4.y), 'h3')
+        self.assertTrue(between(he3.x, c3.x, hl3.x))
+        self.assertTrue(between(he3.y, c4.y, hl3.y))
         he4 = e4.pathpoint_at_t(0.5).coord
         hl4 = (c4 + c1) / 2
-        self.assertTrue((c1.x > he4.x > hl4.x) and (hl4.y > he4.y > c4.y), 'h4')
+        self.assertTrue(between(he4.x, c1.x, hl4.x))
+        self.assertTrue(between(he4.y, c4.y, hl4.y))
 
         #tangents
         self.assertEqual(e1e.tangent, e2s.tangent, 'tangents e1 e2')

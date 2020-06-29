@@ -79,11 +79,15 @@ class EllipticArc(PathSegment):
         """convert t (always between 0 and 1) to angle theta"""
         start = self.start_theta
         end = self.end_theta
+
         if self.pos_dir and end < start:
             end += 2 * pi
-        #if !self.pos_dir and start < end:
-        # TODO: handle negative direction arcs
-        return start + (end - start) * t
+
+        if not self.pos_dir and start < end:
+            end -= 2 * pi
+        arc_size = end - start
+
+        return (start + (end - start) * t) % (2 * pi)
 
     def theta_to_t(self, theta):
         full_arc_size = (self.end_theta - self.start_theta + 2 * pi) % (2 * pi)
