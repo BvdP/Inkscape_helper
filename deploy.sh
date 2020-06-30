@@ -1,1 +1,1 @@
-cp inskcape_helper ~/.config/inkscape/extensions
+cp -r inkscape_helper ~/.config/inkscape/extensions
