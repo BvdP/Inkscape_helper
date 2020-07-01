@@ -29,6 +29,15 @@ blue_style = simplestyle.formatStyle(
     'fill': 'none'
     })
 
+def layer(parent, layer_name):
+    layer = inkex.etree.SubElement(parent, 'g')
+    layer.set(inkex.addNS('label', 'inkscape'), layer_name)
+    layer.set(inkex.addNS('groupmode', 'inkscape'), 'layer')
+    return layer
+
+def group(parent):
+    return inkex.etree.SubElement(parent, 'g')
+
 class Path(object):
     """
     Generates SVG paths
