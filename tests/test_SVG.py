@@ -2,7 +2,7 @@ import unittest
 
 import inkex
 from inkscape_helper.Effect import Effect
-from inkscape_helper.SVG_Path import SVG_Path
+import inkscape_helper.SVG
 from inkscape_helper.Coordinate import Coordinate
 
 C00 = Coordinate(0, 0)
@@ -10,14 +10,14 @@ C10 = Coordinate(1, 0)
 C01 = Coordinate(0, 1)
 C11 = Coordinate(1, 1)
 
-class TestPath(unittest.TestCase, SVG_Path):
+class TestPath(unittest.TestCase, inkscape_helper.SVG.Path):
 
     def setUp(self):
         self.eff = inkex.Effect()
         self.eff.affect(['empty.svg'])
 
     def test_line(self):
-        p = SVG_Path()
+        p = inkscape_helper.SVG.Path()
         parent = self.eff.document.getroot()
         p.move_to(C00, True)
         p.line_to(C11)
