@@ -11,7 +11,25 @@ default_style = simplestyle.formatStyle(
     'fill': 'none'
     })
 
-class SVG_Path(object):
+red_style = simplestyle.formatStyle(
+    {'stroke': '#FF0000',
+    'stroke-width': '1',
+    'fill': 'none'
+    })
+
+green_style = simplestyle.formatStyle(
+    {'stroke': '#00FF00',
+    'stroke-width': '1',
+    'fill': 'none'
+    })
+
+blue_style = simplestyle.formatStyle(
+    {'stroke': '#0000FF',
+    'stroke-width': '1',
+    'fill': 'none'
+    })
+
+class Path(object):
     """
     Generates SVG paths
     """
