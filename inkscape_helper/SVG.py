@@ -7,25 +7,25 @@ def _format_1st(command, is_absolute):
 
 default_style = simplestyle.formatStyle(
     {'stroke': '#000000',
-    'stroke-width': '1',
+    'stroke-width': '0.1',
     'fill': 'none'
     })
 
 red_style = simplestyle.formatStyle(
     {'stroke': '#FF0000',
-    'stroke-width': '1',
+    'stroke-width': '0.1',
     'fill': 'none'
     })
 
 green_style = simplestyle.formatStyle(
     {'stroke': '#00FF00',
-    'stroke-width': '1',
+    'stroke-width': '0.1',
     'fill': 'none'
     })
 
 blue_style = simplestyle.formatStyle(
     {'stroke': '#0000FF',
-    'stroke-width': '1',
+    'stroke-width': '0.1',
     'fill': 'none'
     })
 
@@ -57,8 +57,10 @@ class Path(object):
     def v_line_to(self, dist, absolute=False):
         self.nodes.append("{0} {1}".format(_format_1st('v', absolute), dist))
 
-    def arc_to(self, rx, ry, x, y, rotation=0, pos_sweep=True, large_arc=False, absolute=False):
-        self.nodes.append("{0} {1} {2} {3} {4} {5} {6} {7}".format(_format_1st('a', absolute), rx, ry, rotation, 1 if large_arc else 0, 1 if pos_sweep else 0, x, y))
+    def arc_to(self, radius, coord, rotation=0, pos_sweep=True, large_arc=False, absolute=False):
+        self.nodes.append("{0} {1} {2} {3} {4} {5} {6} {7}"
+            .format(_format_1st('a', absolute), radius.x, radius.y, rotation,
+                   1 if large_arc else 0, 1 if pos_sweep else 0, coord.x, coord.y))
 
     def close(self):
         self.nodes.append('z')
