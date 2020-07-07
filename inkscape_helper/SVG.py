@@ -38,6 +38,15 @@ def layer(parent, layer_name):
 def group(parent):
     return inkex.etree.SubElement(parent, 'g')
 
+def text(parent, coordinate, txt, style=default_style):
+    text = inkex.etree.Element(inkex.addNS('text', 'svg'))
+    text.text = txt
+    text.set('x', str(coordinate.x))
+    text.set('y', str(coordinate.y))
+    style = {'text-align': 'center', 'text-anchor': 'middle'}
+    text.set('style', simplestyle.formatStyle(style))
+    parent.append(text)
+
 class Path(object):
     """
     Generates SVG paths
