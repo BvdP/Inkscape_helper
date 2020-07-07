@@ -1,5 +1,8 @@
 import inkex
 
+errormsg = inkex.errormsg
+debug = inkex.debug
+
 class Effect(inkex.Effect):
     """
     Provides some extra features to inkex.Effect:
