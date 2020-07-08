@@ -57,7 +57,7 @@ class Ellipse(object):
 
     def theta_from_dist(self, theta_start, dist):
         """Returns the angle that you get when starting at theta_start and moving a distance (dist) in CCW direction"""
-        si = int(theta_start / self.angle_step)
+        si = int(theta_start / self.angle_step) % self.nr_points
         p = theta_start % self.angle_step
 
         piece_length = self.distances[si + 1] - self.distances[si]

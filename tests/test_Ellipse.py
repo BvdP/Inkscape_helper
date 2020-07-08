@@ -46,4 +46,7 @@ class TestEllipse(unittest.TestCase):
         pass
 
     def test_theta_from_dist(self):
-        pass
+        self.assertAlmostEqual(self.circle.theta_from_dist(0, 10 * pi), pi, places=5)
+        self.assertAlmostEqual(self.circle.theta_from_dist(1, 10 * pi), pi + 1, places=1) # Accurary gets really bad here
+        self.assertAlmostEqual(self.circle.theta_from_dist(pi, 10 * pi), 0, places=5)
+        self.assertAlmostEqual(self.circle.theta_from_dist(2*pi, 0), 0, places=5)
