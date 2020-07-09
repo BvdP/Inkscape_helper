@@ -14,7 +14,7 @@ class TestPath(unittest.TestCase, inkscape_helper.SVG.Path):
 
     def setUp(self):
         self.eff = inkex.Effect()
-        self.eff.affect(['empty.svg'])
+        self.eff.run(['empty.svg'])
 
     def test_line(self):
         p = inkscape_helper.SVG.Path()

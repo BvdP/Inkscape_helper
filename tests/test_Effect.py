@@ -10,7 +10,7 @@ class TestEffect(unittest.TestCase):
 
     def setUp(self):
         self.eff = inkex.Effect()
-        self.eff.affect(['empty.svg'])
+        self.eff.run(['empty.svg'])
 
     def test_known_units(self):
         self.assertIn('cm', eff.knownUnits)
