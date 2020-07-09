@@ -87,8 +87,8 @@ def on_segment(pt, start, end):
     end -= start
     ex, ey = end.x, end.y
     px, py = pt.x, pt.y
-    px *= cmp(ex, 0)
-    py *= cmp(ey, 0)
+    px *= 1 if ex > 0 else -1
+    py *= 1 if ey > 0 else -1
     return px >= 0 and px <= abs(ex) and py >= 0 and py <= abs(ey)
 
 def intersection (s1, e1, s2, e2, on_segments = True):
