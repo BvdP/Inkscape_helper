@@ -40,7 +40,7 @@ class EllipticArc(PathSegment):
         c1 = Coordinate((cx - sx) / (2*ry*ff), (cy + sy) / (2*rx*ff))
         c2 = Coordinate((cx + sx) / (2*ry*ff), (cy - sy) / (2*rx*ff))
 
-        if end_o.cross_norm(c1 - r_start) < 0: # c1 is to the left of end_o
+        if end_o.cross_norm(c1 - r_start) > 0: # c1 is to the left of end_o
             left = c1
             right = c2
         else:
