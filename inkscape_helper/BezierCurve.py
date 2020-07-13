@@ -1,6 +1,6 @@
 from __future__ import division
 
-from PathSegment import *
+from inkscape_helper.PathSegment import *
 from math import hypot
 
 class BezierCurve(PathSegment):

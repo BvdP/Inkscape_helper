@@ -1,4 +1,4 @@
-from PathSegment import *
+from inkscape_helper.PathSegment import *
 
 class Line(PathSegment):
 

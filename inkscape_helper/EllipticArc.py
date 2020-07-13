@@ -1,6 +1,6 @@
-from PathSegment import *
-from Coordinate import Coordinate
-from Ellipse import Ellipse
+from inkscape_helper.PathSegment import *
+from inkscape_helper.Coordinate import Coordinate
+from inkscape_helper.Ellipse import Ellipse
 
 from math import sqrt, pi
 import copy

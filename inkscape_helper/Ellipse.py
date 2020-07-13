@@ -1,6 +1,6 @@
 from __future__ import division
 from math import *
-from Coordinate import Coordinate
+from inkscape_helper.Coordinate import Coordinate
 
 class Ellipse(object):
     """Used as a base class for EllipticArc."""
