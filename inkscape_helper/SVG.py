@@ -1,4 +1,5 @@
 import inkex
+from lxml import etree
 import simplestyle
 
 def _format_1st(command, is_absolute):
@@ -30,16 +31,16 @@ blue_style = simplestyle.formatStyle(
     })
 
 def layer(parent, layer_name):
-    layer = inkex.etree.SubElement(parent, 'g')
+    layer = etree.SubElement(parent, 'g')
     layer.set(inkex.addNS('label', 'inkscape'), layer_name)
     layer.set(inkex.addNS('groupmode', 'inkscape'), 'layer')
     return layer
 
 def group(parent):
-    return inkex.etree.SubElement(parent, 'g')
+    return etree.SubElement(parent, 'g')
 
 def text(parent, coordinate, txt, style=default_style):
-    text = inkex.etree.Element(inkex.addNS('text', 'svg'))
+    text = etree.Element(inkex.addNS('text', 'svg'))
     text.text = txt
     text.set('x', str(coordinate.x))
     text.set('y', str(coordinate.y))
@@ -77,7 +78,7 @@ class Path(object):
     def path(self, parent, style=default_style):
         attribs = {'style': style,
                     'd': ' '.join(self.nodes)}
-        inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), attribs)
+        etree.SubElement(parent, inkex.addNS('path', 'svg'), attribs)
 
     def curve(self, parent, segments, style, closed=True):
         pathStr = ' '.join(segments)
@@ -86,7 +87,7 @@ class Path(object):
         attributes = {
           'style': style,
           'd': pathStr}
-        inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), attributes)
+        etree.SubElement(parent, inkex.addNS('path', 'svg'), attributes)
 
     def remove_last(self):
         self.nodes.pop()
