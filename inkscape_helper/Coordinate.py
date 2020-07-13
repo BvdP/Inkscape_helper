@@ -72,7 +72,7 @@ class Coordinate(object):
 
     def cross_norm(self, other):
         """"the norm of the cross product"""
-        self.x * other.y - self.y * other.x
+        return self.x * other.y - self.y * other.x
 
     def close_enough_to(self, other, limit=1E-9):
         return (self - other).r < limit
