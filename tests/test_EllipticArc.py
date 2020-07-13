@@ -24,7 +24,7 @@ class TestEllipticArc(unittest.TestCase, Effect):
         large_arc = EllipticArc(C20_0, C0_10, 20, 10, 0, large_arc = True)
         self.assertEqual(large_arc.center, C20_10, 'ellipse center large arc')
         neg_arc = EllipticArc(C20_0, C0_10, 20, 10, 0, pos_dir = False)
-        self.assertEqual(neg_arc.center, C20_10, 'ellipse center large arc')
+        self.assertEqual(neg_arc.center, C20_10, 'ellipse center neg dir')
 
     def test_t_to_theta(self):
         #arc = EllipticArc(C10_0, C0_10, 10, 10, 45) # quarter circle, axis rotated by 45 degree
