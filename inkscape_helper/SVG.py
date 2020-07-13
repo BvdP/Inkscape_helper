@@ -1,34 +1,33 @@
 import inkex
 from lxml import etree
-import simplestyle
 
 def _format_1st(command, is_absolute):
     """Small helper function for the Path class"""
     return command.upper() if is_absolute else command.lower()
 
-default_style = simplestyle.formatStyle(
+default_style = str(inkex.Style(
     {'stroke': '#000000',
     'stroke-width': '0.1',
     'fill': 'none'
-    })
+    }))
 
-red_style = simplestyle.formatStyle(
+red_style = str(inkex.Style(
     {'stroke': '#FF0000',
     'stroke-width': '0.1',
     'fill': 'none'
-    })
+    }))
 
-green_style = simplestyle.formatStyle(
+green_style = str(inkex.Style(
     {'stroke': '#00FF00',
     'stroke-width': '0.1',
     'fill': 'none'
-    })
+    }))
 
-blue_style = simplestyle.formatStyle(
+blue_style = str(inkex.Style(
     {'stroke': '#0000FF',
     'stroke-width': '0.1',
     'fill': 'none'
-    })
+    }))
 
 def layer(parent, layer_name):
     layer = etree.SubElement(parent, 'g')
@@ -45,7 +44,7 @@ def text(parent, coordinate, txt, style=default_style):
     text.set('x', str(coordinate.x))
     text.set('y', str(coordinate.y))
     style = {'text-align': 'center', 'text-anchor': 'middle'}
-    text.set('style', simplestyle.formatStyle(style))
+    text.set('style', str(inkex.Style(style)))
     parent.append(text)
 
 class Path(object):
