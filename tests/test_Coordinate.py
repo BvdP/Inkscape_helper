@@ -40,3 +40,11 @@ class TestCoordinate(unittest.TestCase):
 
     def test_t(self):
         self.assertEqual(C11.t, pi/4)
+
+    def test_cross_norm(self):
+        self.assertEqual(C11.cross_norm(C11), 0)
+        self.assertEqual(C10.cross_norm(C01), 1)
+        self.assertEqual(C01.cross_norm(-C10), 1)
+
+        self.assertGreater(C10.cross_norm(C11), 0)
+        self.assertLess(C01.cross_norm(C11), 0)
