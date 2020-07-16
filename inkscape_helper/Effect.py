@@ -3,7 +3,7 @@ import inkex
 errormsg = inkex.errormsg
 debug = inkex.debug
 
-class Effect(inkex.Effect):
+class Effect(inkex.EffectExtension):
     """
     Provides some extra features to inkex.Effect:
     - Allows you to pass a list of options in stead of setting them one by one
