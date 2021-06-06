@@ -11,9 +11,9 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(str(self.mtx.minor(1, 1)), '[\n[1, 3],\n[7, 9]\n]')
 
     def test_determinant(self):
-        self.assertEqual(self.mtx.det(), 0)
-        self.assertEqual(self.mtx.minor(2, 2).det(), -3)
+        self.assertEqual(self.mtx.det, 0)
+        self.assertEqual(self.mtx.minor(2, 2).det, -3)
 
     def test_determinant_1x1(self):
         m = Matrix([[3]])
-        self.assertEqual(m.det(), 3)
+        self.assertEqual(m.det, 3)

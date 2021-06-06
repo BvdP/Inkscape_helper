@@ -23,6 +23,7 @@ class Matrix(object):
     def minor(self, row, col):
         return Matrix([[self[r][c] for c in range(self.columns) if c != col] for r in range(self.rows) if r != row])
 
+    @property
     def det(self):
         if self.rows != self.columns:
             raise TypeError('Can only calculate determinant for a square matrix')
@@ -32,7 +33,7 @@ class Matrix(object):
             return self[0][0] * self[1][1] - self[0][1] * self[1][0]
         det = 0
         for i in range(self.columns):
-            det += (-1)**i * self.array[0][i] * self.minor(0, i).det()
+            det += (-1)**i * self.array[0][i] * self.minor(0, i).det
         return det
 
     def __getitem__(self, index):
