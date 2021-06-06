@@ -13,3 +13,7 @@ class TestMatrix(unittest.TestCase):
     def test_determinant(self):
         self.assertEqual(self.mtx.det(), 0)
         self.assertEqual(self.mtx.minor(2, 2).det(), -3)
+
+    def test_determinant_1x1(self):
+        m = Matrix([[3]])
+        self.assertEqual(m.det(), 3)
