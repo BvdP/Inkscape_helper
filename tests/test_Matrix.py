@@ -7,6 +7,9 @@ class TestMatrix(unittest.TestCase):
     def test_repr(self):
         self.assertEqual(str(self.mtx), '[\n[1, 2, 3],\n[4, 5, 6],\n[7, 8, 9]\n]')
 
+    def test_eq(self):
+        self.assertEqual(self.mtx, self.mtx)
+
     def test_minor(self):
         self.assertEqual(str(self.mtx.minor(1, 1)), '[\n[1, 3],\n[7, 9]\n]')
 

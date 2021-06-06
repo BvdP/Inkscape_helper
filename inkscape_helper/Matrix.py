@@ -20,6 +20,9 @@ class Matrix(object):
         a = ['[' + ', '.join([str(i) for i in r]) + ']' for r in self.array]
         return '[\n' + ',\n'.join(a) + '\n]'
 
+    def __eq__(self, other):
+        return self.array == other.array
+
     def minor(self, row, col):
         return Matrix([[self[r][c] for c in range(self.columns) if c != col] for r in range(self.rows) if r != row])
 
