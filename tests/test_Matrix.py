@@ -25,3 +25,6 @@ class TestMatrix(unittest.TestCase):
         m = Matrix([[1, 2]])
         with self.assertRaises(TypeError):
             m.det
+
+    def test_add(self):
+        self.assertEqual(self.mtx + self.mtx, Matrix([[2,4,6],[8,10,12],[14,16,18]]))
