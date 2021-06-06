@@ -17,3 +17,8 @@ class TestMatrix(unittest.TestCase):
     def test_determinant_1x1(self):
         m = Matrix([[3]])
         self.assertEqual(m.det, 3)
+
+    def test_determinant_wrong_size(self):
+        m = Matrix([[1, 2]])
+        with self.assertRaises(TypeError):
+            m.det
