@@ -28,3 +28,8 @@ class TestMatrix(unittest.TestCase):
 
     def test_add(self):
         self.assertEqual(self.mtx + self.mtx, Matrix([[2,4,6],[8,10,12],[14,16,18]]))
+
+    def test_add_size_mismatch(self):
+        m = Matrix([[1, 2]])
+        with self.assertRaises(TypeError):
+            m + self.mtx
