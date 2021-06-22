@@ -20,8 +20,8 @@ class TestEffect(unittest.TestCase):
 
     def test_options(self):
         options = []
-        options.append(['optname', 'int'])
-        options.append(['othername', 'string', 'default', 'help text'])
+        options.append(['optname', int])
+        options.append(['othername', str, 'default', 'help text'])
 
         eff = Effect(options)
         self.assertIsInstance(eff, Effect)
