@@ -16,9 +16,9 @@ class Effect(inkex.EffectExtension):
         if options != None:
             for opt in options:
                 if len(opt) == 2:
-                    self.OptionParser.add_option('--' + opt[0], type = opt[1], dest = opt[0])
+                    self.arg_parser.add_argument('--' + opt[0], type = opt[1], dest = opt[0])
                 else:
-                    self.OptionParser.add_option('--' + opt[0], type = opt[1], dest = opt[0], default = opt[2], help = opt[3])
+                    self.arg_parser.add_argument('--' + opt[0], type = opt[1], dest = opt[0], default = opt[2], help = opt[3])
 
     try:
         inkex.Effect.unittouu   # unitouu has moved since Inkscape 0.91
