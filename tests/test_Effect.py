@@ -16,7 +16,7 @@ class TestEffect(unittest.TestCase):
         self.assertIn('cm', eff.knownUnits)
 
     def test_unittouu(self):
-        self.assertEqual(self.eff.unittouu('0 cm'), 0)
+        self.assertEqual(self.eff.svg.unittouu('0 cm'), 0)
 
     def test_options(self):
         options = []
